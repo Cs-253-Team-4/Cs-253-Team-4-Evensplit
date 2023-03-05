@@ -53,14 +53,14 @@ export default function Home() {
                   </div>
                 </div>
                 <Link 
-                  // onClick={
-                  //   return signup;
-                  // }
                   href={"/homepage"}
                   className="text-xl text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
                 >
                   Login
                 </Link>
+                <div className="text-sm mt-5">
+                  <Link href={"/"} className= "text-black px-4 py-1  hover:text-blue-500">Admin? Login Here</Link>
+                </div>
               </div>
             </div>
             <div className="bg-blue-400 text-white w-2/5 rounded-2xl rounded-br-2xl py-36 px-10">

@@ -18,7 +18,7 @@ export default function homepage(){
         </Link>
       </div>
       <div className="w-1/2 flex justify-center">
-        <Link href={"/"}>
+        <Link href={"/user-finance"}>
         <div className="h-40 w-40"><img src="https://i.ibb.co/hMW5Scp/money.png" alt="money" border="0"/></div>
           <h1 className="text-3xl font-bold text-blue-500">EXPENSES</h1>
         </Link>
