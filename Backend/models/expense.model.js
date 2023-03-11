@@ -1,10 +1,11 @@
 const mongoose = require('mongoose')
 
-const User = new mongoose.Schema(
+const Expense = new mongoose.Schema(
 	{
-		personal : {type : Array, "default":[]},
-        friends : {type : Array, "default":[]},
-        groups : {type : Array, "default":[]},
+		email : {type: String, required: true, unique: true},
+		personal : {type: Array, "default":[]},
+        friends : {type: Array, "default":[]},
+        groups : {type: Array, "default":[]},	//array stores group ids
 	},
 	{ collection: 'expense-data' }
 )
