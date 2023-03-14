@@ -11,10 +11,12 @@ const Global = require('./models/globalEvents.model')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
+const splitwise = require('./Functions/splitwise')
+
 app.use(cors())
 app.use(express.json())
 
-const url = 'mongodb://localhost:27017/Cs-253';
+const url = 'mongodb+srv://antriksh:VTg1Sk8H@cluster0.bncmyew.mongodb.net/testing?retryWrites=true&w=majority';
 
 mongoose.connect(url, {
     useNewUrlParser: true,
@@ -182,7 +184,7 @@ app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' 
     }  
 })
 
-app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {groupID, amount, message}
+app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {groupID, array of returners, amount, message, }
 	console.log('add expense to group api called');
     const token = req.headers['x-access-token'];
     try{
@@ -190,9 +192,12 @@ app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-t
         const email = decoded.email; 
         const groupID = req.body.groupID;
 		const amount = req.body.amount;
+		const returners = req.body.returners;
 		const message = req.body.message;
+		// const reciever_email=req.body
 		const filter = {_id: groupID};
-		const update = {$push: {expenses : {'email': email, 'Amount': amount, 'Message': message}}};
+		// const 
+		const update = {$push: {expenses : {'payer': email, 'returners': returners,'Amount': amount, 'Message': message}}};
 		await Group.updateOne(filter,update);
         res.json({status: 'ok'});
     }catch(err){
@@ -258,6 +263,26 @@ app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : t
         console.log(err);
         res.json({status: 'error', error: 'Invalid token'})
     }  
+})
+
+app.post('/api/simplify', async (req,res) =>{	//headers = {'x-access-token' : token}, body = {groupID }
+
+	console.log('simplify api called');
+    const token = req.headers['x-access-token'];
+	try{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email; 
+        const groupID = req.body.groupID;
+		const filter = {_id: groupID};
+		const group = await Group.findOne(filter);
+		var transactionsArray = group.expenses;
+		var simplifiedTransactions = await splitwise(transactionsArray);
+        res.json({status: 'ok', simplifiedTransactions: simplifiedTransactions});
+    }catch(err){
+        console.log(err);
+        res.json({status: 'error', error: 'Invalid token'})
+    }    
+
 })
 
 // app.get('/api/getEvents', async (req,res) => {	//headers = {'x-access-token' : token}
