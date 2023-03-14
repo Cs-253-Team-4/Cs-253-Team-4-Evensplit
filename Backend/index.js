@@ -5,13 +5,16 @@ const mongoose = require('mongoose')
 const User = require('./models/user.model')
 const Expense = require('./models/expense.model')
 const Group = require('./models/group.model')
+const Calendar = require('./models/calendar.model')
+const Event = require('./models/event.model')
+const Global = require('./models/globalEvents.model')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
 app.use(cors())
 app.use(express.json())
 
-const url = 'mongodb://localhost:27017/Cs-253';
+const url = 'mongodb+srv://antriksh:VTg1Sk8p@cluster0.bncmyew.mongodb.net/testing?retryWrites=true&w=majority';
 
 mongoose.connect(url, {
     useNewUrlParser: true,
@@ -24,18 +27,22 @@ mongoose.connect(url, {
 });
 
 app.post('/api/register', async (req, res) => { //body = {name, email, password}
-	try {
-		const newPassword = await bcrypt.hash(req.body.password, 10)
-		await User.create({
-			name: req.body.name,
-			email: req.body.email,
-			password: newPassword,
-		}).then(Expense.create({email: req.body.email}));
-		res.json({ status: 'ok' });
-        console.log('User registered successfully!');
-	} catch (err) {
-		res.json({ status: 'error', error: 'Duplicate email' })
-	}
+		const user = await User.findOne({email: req.body.email});
+		if(!user){
+			const newPassword = await bcrypt.hash(req.body.password, 10)
+			await User.create({
+				name: req.body.name,
+				email: req.body.email,
+				password: newPassword,
+				isAdmin: false,
+			}).then(Expense.create({email: req.body.email})).then(Calendar.create({email: req.body.email}));
+			res.json({ status: 'ok' });
+			console.log('User registered successfully!');
+		}
+		else{
+			res.json({ status: 'error', error: 'Duplicate email' })
+		}
+	
 })
 
 app.post('/api/login', async (req, res) => {    //body = {email, password}
@@ -60,7 +67,8 @@ app.post('/api/login', async (req, res) => {    //body = {email, password}
 			},
 			'secret123'
 		)
-		console.log('Login Successful!')	
+		console.log('Login Successful!')
+		console.log(user.email);	
 		return res.json({ status: 'ok', user: token })
 	} else {
 		return res.json({ status: 'error', user: false })
@@ -213,6 +221,73 @@ app.get('/api/getGroups', async (req,res) => {	//headers = {'x-access-token' : t
         res.json({status: 'error', error: 'Invalid token'})
     }
 })
+
+app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : token}, body = {name, start_time, end_time, description, relevant_tags}
+	console.log('add event api called');
+	console.log(req.body);
+	const token = req.headers['x-access-token'];
+    try{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email; 
+		const name = req.body.name;
+		const start_time = req.body.start_time;
+		const end_time = req.body.end_time;
+		const description = req.body.description;
+		const relevant_tags = req.body.relevant_tags;
+
+		const newEvent = await Event.create({
+			name: name,
+			start_time: start_time, 
+			end_time: end_time, 
+			description: description, 
+			relevant_tags: relevant_tags
+		})
+		console.log(newEvent);
+		const user = await User.findOne({email: email});
+		if(user.isAdmin == true){
+			await GlobalEvent.create({'eventID': newEvent._id});
+		}
+		else{
+			console.log(email);
+			const filter = {email: email}; 
+        	const update = {$push: {personal_events: {'eventID': newEvent._id}}};
+			await Calendar.updateOne(filter,update);
+		}		
+        res.json({status: 'ok'});
+    }catch(err){
+        console.log(err);
+        res.json({status: 'error', error: 'Invalid token'})
+    }  
+})
+
+// app.get('/api/getEvents', async (req,res) => {	//headers = {'x-access-token' : token}
+// 	console.log('get events api called');
+//     const token = req.headers['x-access-token'];
+//     try{
+//         const decoded = jwt.verify(token,'secret123');
+//         const email = decoded.email; 
+//         const user = await User.findOne({email: email});
+// 		var events = [];
+// 		var global_events = await Global.find();
+// 		var i;
+// 		for(i=0;i<global_events.length;i++){
+// 			events.push(await Event.findOne({_id: global_events[i].eventID}));
+// 		}
+// 		if(user.isAdmin == true){
+// 			res.json({status: 'ok', events: events});	//events is array of events		
+// 		}
+// 		else{
+// 			const userCalendar = await Calendar.findOne({email: email});
+// 			for(i=0;i<userCalendar.personal_events.length;i++){
+// 				events.push(await Event.findOne({_id: userCalendar.personal_events[i].eventID}));
+// 			}
+// 			res.json({status: 'ok', events: events});	//events is array of events
+// 		}
+//     }catch(err){
+//         console.log(err);
+//         res.json({status: 'error', error: 'Invalid token'})
+//     }
+// })
 
 app.listen(1337, () => {
 	console.log('Server started on 1337')
