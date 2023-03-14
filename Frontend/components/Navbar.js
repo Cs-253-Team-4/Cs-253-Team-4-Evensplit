@@ -7,7 +7,7 @@ import NavItem from "./NavItem";
 const MENU_LIST = [
   { text: "Home", href: "/homepage" },
   { text: "Calendar", href: "/calendar" },
-  { text: "Expenses", href: "/expense" },
+  { text: "Expenses", href: "/user-finance" },
 ];
 const Navbar = () => {
   const [navActive, setNavActive] = useState(null);

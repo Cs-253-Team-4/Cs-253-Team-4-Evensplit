@@ -23,7 +23,7 @@ nav{
   font-size: xx-large;
   font-weight: 600;
   display: flex;
-  padding: 5px;
+  padding: 0px;
   justify-content: space-between;
   align-items: center;
   background-color: rgb(88, 151, 252);
@@ -100,3 +100,122 @@ nav{
    width: 100%;
   }
 }
+
+/* body {
+  font-family: sans-serif;
+  margin: 0 auto;
+  padding: 25px;
+  max-width: 400px;
+  min-width: 400px; 
+  background-color: #dfe6e9;
+  text-align: center;
+} */
+
+.heading {
+  /* display: inline-block; */
+  text-align: center;
+  font-size: 2em;
+  color: #2d3436;
+  margin: 15px 0 25px;
+  /* border-bottom: 5px solid #2d3436; */
+}
+
+.card-container::before {
+  content: "";
+  position: absolute;
+  top: 85px;
+  height: 5px;
+  width: 5%;
+  background: #6a6c6d;
+  /* width: 1px; */
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  /* width: auto; */
+  justify-content: center;
+  /* align-items: center; */
+  padding: 0px;
+  margin: 0px;
+}
+
+.card-container .card-box {
+  /* display: flex; */
+  /* justify-content: flex-end;
+  align-items: center; */
+  padding: 0px;
+  margin: 10px;
+}
+
+.card {
+  border-radius: 25px;
+  /* display: flex; */
+  /* flex-wrap: wrap; */
+  /* margin: 100px; */
+  width: 300px;
+  position: relative;
+  padding: 25px 15px;
+  background-color: #81ecec;
+  margin: 15px 0;
+  height: 200px;
+  box-shadow: 0 2px 5px #ccc;
+  text-align: left;
+  transition-duration: 0.3s;
+}
+
+.card .top {
+  border-radius: 25px 25px 0 0;
+  height: 100px;
+  width: 100%;
+  background-color: #00cec9;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+}
+
+.name {
+  font-size: 2em;
+  color: #2d3436;
+  /* display: flex; */
+  flex: 1;
+  margin: 10% 20px 0;
+}
+
+.card .top img {
+  margin: 30px 20px 0 0;
+  /* position: relative; */
+  /* display: flex; */
+  /* justify-items: flex-end; */
+  min-width: 5px;
+  flex: 1;
+}
+
+.circle-img {
+  /* display: flex; */
+  /* justify-content: flex-end; */
+  /* position: absolute;
+  right: 0; */
+  border-radius: 50%;
+  border: 7px solid #fff;
+  width: 120px;
+  height: 120px;
+}
+
+.card .bottom {
+  width: 100%;
+  margin-top: 150px;
+}
+
+.info {
+  margin: 20px 0;
+  /* color: #1a7e76; */
+  color: "";
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
+

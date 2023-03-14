@@ -29,14 +29,7 @@ export default function signup() {
     });
 
     const data = await response.json();
-    console.log(data);
-    if(data.status == 'ok'){
-      alert('User Registerd Successfully');
-      window.location.href = '/';
-    }
-    else{
-      alert('Duplicate Email');
-    }
+
     // if (data.status === "ok") {
     //   history.push("/login");
     // }
