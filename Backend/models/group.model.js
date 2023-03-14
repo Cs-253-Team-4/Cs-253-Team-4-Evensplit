@@ -1,17 +1,14 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
 
-const groupSchema = new Schema({
-    memberEmails:{
-        type: Array,
-        required: true
-    },
-    requests:{
-        type: Array
-    }
-}, {timestamps: true});
+const Group = new mongoose.Schema(
+	{   
+        title : {type: String, required: true},
+		members : {type: Array, required: true},
+		expenses: {type: Array, "default":[]},  // {email of payer, amount}
+	},
+    { collection: 'group-data' },
+)
 
-const Group = mongoose.model('Group',groupSchema);
+const model = mongoose.model('GroupData', Group)
 
-module.exports = Group;
-
+module.exports = model
