@@ -14,7 +14,7 @@ const bcrypt = require('bcryptjs')
 app.use(cors())
 app.use(express.json())
 
-const url = 'mongodb+srv://antriksh:VTg1Sk8p@cluster0.bncmyew.mongodb.net/testing?retryWrites=true&w=majority';
+const url = 'mongodb://localhost:27017/Cs-253';
 
 mongoose.connect(url, {
     useNewUrlParser: true,
