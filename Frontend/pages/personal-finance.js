@@ -10,7 +10,10 @@ import Navbar from "../components/Navbar";
 
 import { GlobalProvider } from "context/GlobalState";
 
-//import 'pages/App.css';
+
+// import 'pages/App.css';
+
+
 
 const App = () => {
   const [users, setUsers] = useState([])    
@@ -52,7 +55,8 @@ const App = () => {
                         <ul className="list">
                           {/* {tempdata.map(transaction => (<Transaction key={transaction.Title} transaction={transaction} />))} */}
                           {users.map(user => (
-                            <li key={user.Time}>{user.Title} {user.Amount}</li>
+                                <li className={user.Amount < 0 ? 'minus' : 'plus'} key={user.Time}>{user.Title} {user.Amount}</li>
+                              
                           ))}
                         </ul>
                       </div>
@@ -61,9 +65,6 @@ const App = () => {
                   </main>
                 </GlobalProvider>
               );
-            };       
+            };   
           
-        
-
-        
 export default App;
