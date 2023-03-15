@@ -16,7 +16,7 @@ const splitwise = require('./Functions/splitwise')
 app.use(cors())
 app.use(express.json())
 
-const url = 'mongodb://localhost:27017/Cs-253';
+const url = 'mongodb+srv://antriksh:VTg9Sk8H@cluster0.bncmyew.mongodb.net/testing?retryWrites=true&w=majority';
 
 mongoose.connect(url, {
     useNewUrlParser: true,
@@ -79,239 +79,298 @@ app.post('/api/login', async (req, res) => {    //body = {email, password}
 
 app.post('/api/addExpense', async (req,res) => {    //headers = {'x-access-token' : token}, body = {title, amount}
     const token = req.headers['x-access-token'];
-    try{
+    if(!token){
+		console.log('kiki');
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
         const decoded = jwt.verify(token,'secret123');
         const email = decoded.email;
-        var title = req.body.title;
-        var amount = req.body.amount;
-        const filter = {email: email}; 
-        const update = {$push: {personal: {'Title': title, 'Amount': amount}}};
-        await Expense.updateOne(filter,update);
-        console.log('Personal Expense Added Successfully!')
-    }catch(err){
-        console.log(err);
-        res.json({status: 'error', error: 'Invalid token'});
-    }
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{
+			var title = req.body.title;
+			var amount = req.body.amount;
+			const filter = {email: email}; 
+			const update = {$push: {personal: {'Title': title, 'Amount': amount}}};
+			await Expense.updateOne(filter,update);
+			console.log('Personal Expense Added Successfully!')
+		}
+	}      
 })
 
 app.get('/api/getPersonalExpenseHistory', async (req,res) => {  //headers = {'x-access-token' : token}
     console.log('personal history api called');
     const token = req.headers['x-access-token'];
-    console.log(token);
-    try{
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+    else{
         const decoded = jwt.verify(token,'secret123');
         const email = decoded.email; 
-        const userExpense = await Expense.findOne({email: email},{personal: 1});
-        res.json({status: 'ok', personalExpenseHistory: userExpense.personal});
-    }catch(err){
-        console.log(err);
-        res.json({status: 'error', error: 'Invalid token'})
-    }    
+		const user = await User.findOne({email:email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{
+			const userExpense = await Expense.findOne({email: email},{personal: 1});
+			res.json({status: 'ok', personalExpenseHistory: userExpense.personal});
+		}    
+	}       
 })
 
 app.post('/api/requestMoney', async (req,res) => {    //body = {friendEmail, amount, message}
 	const token = req.headers['x-access-token'];
-    console.log(token);
-    try{
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+    else{
         const decoded = jwt.verify(token,'secret123');
-        const email = decoded.email; 
-        var friendEmail = req.body.friendEmail;
-		var amount = req.body.amount;
-		var message = req.body.message;
-		const filter = {email: friendEmail};
-		const filter2 = {email: email};
-		const update = {$push: {friends: {'amount': amount, 'message': message, 'sender': email, 'receiver': friendEmail}}};
-		const update2 = {$push: {friends: {'amount': -amount, 'message': message, 'sender': email, 'receiver': friendEmail}}};
-		Expense.updateOne(filter,update)
-		.then(console.log('Request of Money to Friend Sent Successfully!'))
-		.catch((err) => {
-			console.log(err);
-			console.log('Request Sending Failed!')
-		});
-		Expense.updateOne(filter2,update2)
-		.then(console.log('Request of Money to Friend Sent Successfully!'))
-		.catch((err) => {
-			console.log(err);
-			console.log('Request Sending Failed!')
-		});
-        res.json({status: 'ok'});
-    }catch(err){
-        console.log(err);
-        res.json({status: 'error', error: 'Invalid token'})
-    } 
-    
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{ 
+			var friendEmail = req.body.friendEmail;
+			var amount = req.body.amount;
+			var message = req.body.message;
+			const filter = {email: friendEmail};
+			const filter2 = {email: email};
+			const update = {$push: {friends: {'amount': amount, 'message': message, 'sender': email, 'receiver': friendEmail}}};
+			const update2 = {$push: {friends: {'amount': -amount, 'message': message, 'sender': email, 'receiver': friendEmail}}};
+			Expense.updateOne(filter,update)
+			.then(console.log('Request of Money to Friend Sent Successfully!'))
+			.catch((err) => {
+				console.log(err);
+				console.log('Request Sending Failed!')
+			});
+			Expense.updateOne(filter2,update2)
+			.then(console.log('Request of Money to Friend Sent Successfully!'))
+			.catch((err) => {
+				console.log(err);
+				console.log('Request Sending Failed!')
+			});
+			res.json({status: 'ok'});
+		}
+	}    
 })
 
 app.get('/api/getFriendsHistory', async (req,res) => {
-    console.log('history api called');
+    console.log('friends history api called');
     const token = req.headers['x-access-token'];
-    try{
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
         const decoded = jwt.verify(token,'secret123');
-        const email = decoded.email; 
-        const userExpense = await Expense.findOne({email: email},{friends: 1});
-    	res.json({status: 'ok', friendHistory: userExpense.friends});
-    }catch(err){
-        console.log(err);
-        res.json({status: 'error', error: 'Invalid token'})
-    }
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{ 
+			const userExpense = await Expense.findOne({email: email},{friends: 1});
+			console.log(userExpense.friends);
+			res.json({status: 'ok', friendsHistory: userExpense.friends});
+		}
+	}
+    
 })
 
 app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {title, Array of emails}
 	console.log('create group api called');
 	const token = req.headers['x-access-token'];
-    console.log(token);
-    try{
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+    else{
         const decoded = jwt.verify(token,'secret123');
-        const email = decoded.email; 
-        var i;
-		console.log(req.body.members);
-		const title = req.body.title;
-		var members = req.body.members;
-		members.push({email: email});
-		console.log(members);
-		const newGroup = await Group.create({
-			title: title,
-			members: members,
-		})
-		console.log(newGroup);
-		for(i=0;i<members.length;i++){
-			await Expense.updateOne({email: members[i].email},{$push: {groups: {'groupID': newGroup._id}}})
-		} 
-        res.json({status: 'ok'});
-    }catch(err){
-        console.log(err);
-        res.json({status: 'error', error: 'Invalid token'})
-    }  
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{ 
+			var i;
+			console.log(req.body.members);
+			const title = req.body.title;
+			var members = req.body.members;
+			members.push({email: email});
+			console.log(members);
+			const newGroup = await Group.create({
+				title: title,
+				members: members,
+			})
+			console.log(newGroup);
+			for(i=0;i<members.length;i++){
+				await Expense.updateOne({email: members[i].email},{$push: {groups: {'groupID': newGroup._id}}})
+			} 
+			res.json({status: 'ok'});
+		}
+	}
+      
 })
 
 app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {groupID, array of returners, amount, message, }
 	console.log('add expense to group api called');
     const token = req.headers['x-access-token'];
-    try{
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
         const decoded = jwt.verify(token,'secret123');
-        const email = decoded.email; 
-        const groupID = req.body.groupID;
-		const amount = req.body.amount;
-		const returners = req.body.returners;
-		const message = req.body.message;
-		// const reciever_email=req.body
-		const filter = {_id: groupID};
-		// const 
-		const update = {$push: {expenses : {'payer': email, 'returners': returners,'Amount': amount, 'Message': message}}};
-		await Group.updateOne(filter,update);
-        res.json({status: 'ok'});
-    }catch(err){
-        console.log(err);
-        res.json({status: 'error', error: 'Invalid token'})
-    }    
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		} 
+		else{
+			const groupID = req.body.groupID;
+			const amount = req.body.amount;
+			const returners = req.body.returners;
+			const message = req.body.message;
+			// const reciever_email=req.body
+			const filter = {_id: groupID};
+			// const 
+			const update = {$push: {expenses : {'payer': email, 'returners': returners,'Amount': amount, 'Message': message}}};
+			await Group.updateOne(filter,update);
+			res.json({status: 'ok'});
+		}
+	}
+        
 })
 
 app.get('/api/getGroups', async (req,res) => {	//headers = {'x-access-token' : token}
-	console.log('personal history api called');
+	console.log('get groups api called');
     const token = req.headers['x-access-token'];
-    try{
+	if(!token){
+		res.json({status: 'error', error: 'Invalid token'})
+	}
+	else{
         const decoded = jwt.verify(token,'secret123');
-        const email = decoded.email; 
-        const groupIDs = await Expense.findOne({email: email},{groups: 1});
-		var groups = [];
-		var i;
-		console.log(groupIDs);
-		for(i=0;i<groupIDs.groups.length;i++){
-			groups.push(await Group.findOne({_id: groupIDs.groups[i].groupID}));
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'})
 		}
-		console.log(groups);
-        res.json({status: 'ok', groups: groups});
-    }catch(err){
-        console.log(err);
-        res.json({status: 'error', error: 'Invalid token'})
-    }
+		else{
+			const groupIDs = await Expense.findOne({email: email},{groups: 1});
+			var groups = [];
+			var i;
+			for(i=0;i<groupIDs.groups.length;i++){
+				groups.push(await Group.findOne({_id: groupIDs.groups[i].groupID}));
+			}
+			res.json({status: 'ok', groups: groups});
+		}        
+	}    
 })
 
 app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : token}, body = {name, start_time, end_time, description, relevant_tags}
 	console.log('add event api called');
 	console.log(req.body);
 	const token = req.headers['x-access-token'];
-    try{
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
         const decoded = jwt.verify(token,'secret123');
-        const email = decoded.email; 
-		const name = req.body.name;
-		const start_time = req.body.start_time;
-		const end_time = req.body.end_time;
-		const description = req.body.description;
-		const relevant_tags = req.body.relevant_tags;
-
-		const newEvent = await Event.create({
-			name: name,
-			start_time: start_time, 
-			end_time: end_time, 
-			description: description, 
-			relevant_tags: relevant_tags
-		})
-		console.log(newEvent);
+        const email = decoded.email;
 		const user = await User.findOne({email: email});
-		if(user.isAdmin == true){
-			await GlobalEvent.create({'eventID': newEvent._id});
-		}
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		} 
 		else{
-			console.log(email);
-			const filter = {email: email}; 
-        	const update = {$push: {personal_events: {'eventID': newEvent._id}}};
-			await Calendar.updateOne(filter,update);
-		}		
-        res.json({status: 'ok'});
-    }catch(err){
-        console.log(err);
-        res.json({status: 'error', error: 'Invalid token'})
-    }  
+			const name = req.body.name;
+			const start_time = req.body.start_time;
+			const end_time = req.body.end_time;
+			const description = req.body.description;
+			const relevant_tags = req.body.relevant_tags;
+
+			const newEvent = await Event.create({
+				name: name,
+				start_time: start_time, 
+				end_time: end_time, 
+				description: description, 
+				relevant_tags: relevant_tags
+			})
+			console.log(newEvent);
+			const user = await User.findOne({email: email});
+			if(user.isAdmin == true){
+				await GlobalEvent.create({'eventID': newEvent._id});
+			}
+			else{
+				console.log(email);
+				const filter = {email: email}; 
+				const update = {$push: {personal_events: {'eventID': newEvent._id}}};
+				await Calendar.updateOne(filter,update);
+			}		
+			res.json({status: 'ok'});
+		}
+	}
+     
 })
 
 app.post('/api/simplify', async (req,res) =>{	//headers = {'x-access-token' : token}, body = {groupID }
 
 	console.log('simplify api called');
     const token = req.headers['x-access-token'];
-	try{
+	if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
         const decoded = jwt.verify(token,'secret123');
-        const email = decoded.email; 
-        const groupID = req.body.groupID;
-		const filter = {_id: groupID};
-		const group = await Group.findOne(filter);
-		var transactionsArray = group.expenses;
-		var simplifiedTransactions = await splitwise(transactionsArray);
-        res.json({status: 'ok', simplifiedTransactions: simplifiedTransactions});
-    }catch(err){
-        console.log(err);
-        res.json({status: 'error', error: 'Invalid token'})
-    }    
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		} 
+		else{
+			const groupID = req.body.groupID;
+			const filter = {_id: groupID};
+			const group = await Group.findOne(filter);
+			var transactionsArray = group.expenses;
+			var simplifiedTransactions = await splitwise(transactionsArray);
+			res.json({status: 'ok', simplifiedTransactions: simplifiedTransactions});
+		}
+	}
 
 })
 
 // app.get('/api/getEvents', async (req,res) => {	//headers = {'x-access-token' : token}
 // 	console.log('get events api called');
 //     const token = req.headers['x-access-token'];
-//     try{
+//     if(!token){
+// 		res.json({status: 'error', error: 'Invalid token'});
+// 	}
+// 	else{
 //         const decoded = jwt.verify(token,'secret123');
 //         const email = decoded.email; 
 //         const user = await User.findOne({email: email});
-// 		var events = [];
-// 		var global_events = await Global.find();
-// 		var i;
-// 		for(i=0;i<global_events.length;i++){
-// 			events.push(await Event.findOne({_id: global_events[i].eventID}));
-// 		}
-// 		if(user.isAdmin == true){
-// 			res.json({status: 'ok', events: events});	//events is array of events		
+// 		if(!user){
+// 			res.json({status: 'error', error: 'Invalid token'});
 // 		}
 // 		else{
-// 			const userCalendar = await Calendar.findOne({email: email});
-// 			for(i=0;i<userCalendar.personal_events.length;i++){
-// 				events.push(await Event.findOne({_id: userCalendar.personal_events[i].eventID}));
+// 			var events = [];
+// 			var global_events = await Global.find();
+// 			var i;
+// 			for(i=0;i<global_events.length;i++){
+// 				events.push(await Event.findOne({_id: global_events[i].eventID}));
 // 			}
-// 			res.json({status: 'ok', events: events});	//events is array of events
+// 			if(user.isAdmin == true){
+// 				res.json({status: 'ok', events: events});	//events is array of events		
+// 			}
+// 			else{
+// 				const userCalendar = await Calendar.findOne({email: email});
+// 				for(i=0;i<userCalendar.personal_events.length;i++){
+// 					events.push(await Event.findOne({_id: userCalendar.personal_events[i].eventID}));
+// 				}
+// 				res.json({status: 'ok', events: events});	//events is array of events
+// 			}
 // 		}
-//     }catch(err){
-//         console.log(err);
-//         res.json({status: 'error', error: 'Invalid token'})
-//     }
+// 	}    
 // })
 
 app.listen(1337, () => {
