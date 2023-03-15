@@ -31,8 +31,12 @@ export default function signup() {
     const data = await response.json();
 
     // if (data.status === "ok") {
-    //   history.push("/login");
+    //   history.push("/");
     // }
+    if(data.status == 'ok'){
+      alert('User Registered Successfully');
+      window.location.href = '/';
+    }
   }
   return (
     <>
