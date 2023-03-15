@@ -37,6 +37,9 @@ export default function signup() {
       alert('User Registered Successfully');
       window.location.href = '/';
     }
+    else{
+      alert('User Already Registered');
+    }
   }
   return (
     <>
