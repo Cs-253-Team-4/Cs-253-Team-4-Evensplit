@@ -7,16 +7,30 @@ export const AddTransaction = () => {
 
   const { addTransaction } = useContext(GlobalContext);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
     const newTransaction = {
       id: Math.floor(Math.random() * 100000000),
       text,
       amount: +amount,
-    };
+    };    
+    await addTransaction(newTransaction);
 
-    addTransaction(newTransaction);
+    const res = await fetch('http://localhost:1337/api/addExpense', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': localStorage.getItem('token'),
+        },
+        body: JSON.stringify({
+            title: text,
+            amount: amount,
+        }),
+    });
+    const data = await res.json();
+  
+
   };
 
   return (
