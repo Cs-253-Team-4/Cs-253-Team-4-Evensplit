@@ -16,7 +16,7 @@ const splitwise = require('./Functions/splitwise')
 app.use(cors())
 app.use(express.json())
 
-const url = 'mongodb+srv://antriksh:VTg9Sk8H@cluster0.bncmyew.mongodb.net/testing?retryWrites=true&w=majority';
+const url = 'mongodb://localhost:27107/Cs-253';
 
 mongoose.connect(url, {
     useNewUrlParser: true,
@@ -42,6 +42,7 @@ app.post('/api/register', async (req, res) => { //body = {name, email, password}
 			console.log('User registered successfully!');
 		}
 		else{
+			console.log('User already registered');
 			res.json({ status: 'error', error: 'Duplicate email' })
 		}
 	
@@ -80,7 +81,6 @@ app.post('/api/login', async (req, res) => {    //body = {email, password}
 app.post('/api/addExpense', async (req,res) => {    //headers = {'x-access-token' : token}, body = {title, amount}
     const token = req.headers['x-access-token'];
     if(!token){
-		console.log('kiki');
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
@@ -92,11 +92,13 @@ app.post('/api/addExpense', async (req,res) => {    //headers = {'x-access-token
 		}
 		else{
 			var title = req.body.title;
-			var amount = req.body.amount;
+			const amount = req.body.amount;
 			const filter = {email: email}; 
-			const update = {$push: {personal: {'Title': title, 'Amount': amount}}};
-			await Expense.updateOne(filter,update);
-			console.log('Personal Expense Added Successfully!')
+			const update = {$push: {personal: {'Title': title, 'Amount': amount, 'Time': new Date()}}};
+			if(amount != "₹"){
+				await Expense.updateOne(filter,update);
+				console.log('Personal Expense Added Successfully!')
+			}
 		}
 	}      
 })
@@ -130,28 +132,65 @@ app.post('/api/requestMoney', async (req,res) => {    //body = {friendEmail, amo
         const decoded = jwt.verify(token,'secret123');
         const email = decoded.email;
 		const user = await User.findOne({email: email});
+		const friend = await User.findOne({email: req.body.friendEmail});
 		if(!user){
 			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else if(!friend){
+			res.json({status: 'error', error: 'Invalid Friend Email'});
 		}
 		else{ 
 			var friendEmail = req.body.friendEmail;
 			var amount = req.body.amount;
 			var message = req.body.message;
 			const filter = {email: friendEmail};
-			const filter2 = {email: email};
-			const update = {$push: {friends: {'amount': amount, 'message': message, 'sender': email, 'receiver': friendEmail}}};
-			const update2 = {$push: {friends: {'amount': -amount, 'message': message, 'sender': email, 'receiver': friendEmail}}};
+			const update = {$push: {requests: {'amount': amount, 'message': message, 'senderEmail': email, 'senderName': user.name, 'resolved': false}}};
 			Expense.updateOne(filter,update)
 			.then(console.log('Request of Money to Friend Sent Successfully!'))
 			.catch((err) => {
 				console.log(err);
 				console.log('Request Sending Failed!')
 			});
-			Expense.updateOne(filter2,update2)
-			.then(console.log('Request of Money to Friend Sent Successfully!'))
+			res.json({status: 'ok'});
+		}
+	}    
+})
+
+app.post('/api/addFriendTransaction', async (req,res) => {    //body = {friendEmail, amount, message}
+	const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+    else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		const friend = await User.findOne({email: req.body.friendEmail});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else if(!friend){
+			res.json({status: 'error', error: 'Invalid Friend Email'});
+		}
+		else{ 
+			var friendEmail = req.body.friendEmail;
+			var amount = req.body.amount;
+			var message = req.body.message;
+			const filter = {email: friendEmail};
+			const update = {$push: {friends: {'amount': amount, 'message': message, 'friendEmail': email, 'friendName': user.name}}};	//amount > 0 means friend sent us money
+			const filter2 = {email: email};
+			const update2 = {$push: {friends: {'amount': -amount, 'message': message, 'friendEmail': friendEmail, 'friendName': friend.name}}};	//amount < 0 means we sent money to friend
+			await Expense.updateOne(filter,update)
+			.then(console.log('Friend Transaction Added Successfully!'))
 			.catch((err) => {
 				console.log(err);
-				console.log('Request Sending Failed!')
+				console.log('Friend Transaction Adding Failed!')
+			});
+			await Expense.updateOne(filter2,update2)
+			.then(console.log('Friend Transaction Added Successfully!'))
+			.catch((err) => {
+				console.log(err);
+				console.log('Friend Transaction Adding Failed!')
 			});
 			res.json({status: 'ok'});
 		}
@@ -173,8 +212,28 @@ app.get('/api/getFriendsHistory', async (req,res) => {
 		}
 		else{ 
 			const userExpense = await Expense.findOne({email: email},{friends: 1});
-			console.log(userExpense.friends);
 			res.json({status: 'ok', friendsHistory: userExpense.friends});
+		}
+	}
+    
+})
+
+app.get('/api/getFriendRequests', async (req,res) => {
+    console.log('get friends requests api called');
+    const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{ 
+			const userExpense = await Expense.findOne({email: email},{requests: 1});
+			res.json({status: 'ok', friendRequests: userExpense.requests});
 		}
 	}
     
