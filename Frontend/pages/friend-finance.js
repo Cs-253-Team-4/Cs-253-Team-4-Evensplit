@@ -7,7 +7,7 @@ import { History } from "components/History";
 
 // import { TransactionList } from 'components/TransactionList';
 import { AddRequest } from "../components/AddRequest";
-import { AddTransaction } from "../components/AddTransaction";
+import { AddFriendTransaction } from "../components/AddFriendTransaction" 
 import Navbar from "../components/Navbar";
 
 import { GlobalProvider } from "context/GlobalState";
@@ -15,9 +15,20 @@ import { PendingListDisplay } from "@/components/PendingListDisplay";
 
 //import 'pages/App.css';
 
+    
+    
+
 function App() {
   const [friendHistory, setFriendHistory] = useState([])    
   const [PendingList, setPendingList] = useState([])    
+  const [users, setUsers] = useState([])   
+  const [query , setQuery] = useState("");
+  const keys = ["name", "email"];
+  const search = (data) => {
+      return data.filter((item) =>
+          keys.some((key) => item[key].toLowerCase().includes(query))
+      );
+  }; 
   const fetchUserData = () => {
     fetch('http://localhost:1337/api/getFriendsHistory', {
       method: 'GET',
@@ -30,8 +41,17 @@ function App() {
     }).then(data => {
       setFriendHistory(data.friendsHistory.reverse())
       setPendingList(data.requests.reverse());
-      console.log(data.requests);
-    })
+    }).then(fetch('http://localhost:1337/api/getUsers', {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': localStorage.getItem('token'),
+        }
+    }).then(res => {
+      return res.json()
+    }).then(data => {
+      setUsers(data.users)
+    }))
   }
   useEffect(() => {
     fetchUserData()
@@ -46,8 +66,22 @@ function App() {
           <div className="w-1/3 flex flex-col p-7 m-5 mx-auto rounded-2xl shadow-2xl h-screen">
             {/* <Balance/> */}
             {/* <IncomeExpenses/> */}
-            <SearchBar />
+            {/* <SearchBar /> */}
             {/* <PendingListDisplay /> */}
+            <div>
+            {/* <h3 className='text-2xl font-bold text-gray-500 m-2' style={{borderBottom:"thick solid gray" }}>Search</h3> */}
+              <form >
+                      <input className="search w-80 text-center border-2 border-gray-600 bg-gray-100 m-1 p-1 text-black rounded-full" placeholder="Search..." onChange={(e) => setQuery(e.target.value.toLowerCase())} />
+                  <div className="overflow-auto h-64">
+                      {search(users).map((item) => (
+                          <button key={item._id} className="w-80 px-5 py-2 m-1 bg-cyan-300 rounded-lg hover:bg-blue-700" > 
+                              <p> {item.name}</p>
+                              <p> {item.email}</p>
+                          </button>
+                      ))}
+                  </div>
+              </form>
+            </div>
             <h3
               className="text-2xl font-bold text-gray-500 m-2 mt-10"
               style={{ borderBottom: "thick solid gray" }}
@@ -67,7 +101,8 @@ function App() {
                     >
                       <p className="justify-start w-60 items-center">
                         {" "}
-                        {request.senderName} ({request.senderEmail}) Requested Rs.{request.amount}{" "}
+                        {request.senderName} ({request.senderEmail}) Requested ₹{request.amount}{" "}
+                        Message: {request.message}
                       </p>
                       <div className="text-right">
                         <button class="rounded-full w-15 py-0.5 px-3 m-1  bg-green-600 ">
@@ -87,7 +122,7 @@ function App() {
             </div>
           </div>
           <div className="w-1/3 flex flex-col p-7 m-5 rounded-2xl shadow-2xl h-screen">
-            <AddTransaction />
+            <AddFriendTransaction />
             <AddRequest />
           </div>
           <div className="w-1/3 flex p-7 m-5 mx-auto justify-center rounded-2xl shadow-2xl h-screen">
