@@ -241,6 +241,65 @@ app.get('/api/getUsers', async (req,res) => {
     
 })
 
+app.post('/api/deleteRequest', async (req,res) => {    //body = {index, amount, message}
+	const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+    else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{ 
+			const index = req.body.index;
+			const accepted = req.body.accepted;
+			if(!index){
+				res.json({status: 'ok'});
+			}
+			else{
+				const userExpense = await Expense.findOne({email: email});
+				const request = userExpense.requests[userExpense.requests.length-index.index-1];
+				if(!request){
+					res.redirect('http://localhost:3000/friend-finance');
+				}
+				else{
+					console.log(request);
+					const filter = {email: email};
+					const update = {$pull: {requests: request}};
+					await Expense.updateOne(filter,update)
+					.then(console.log('Request deleted successfully'))
+					.catch((err) => {
+						console.log(err);
+						console.log('Request deletion failed')
+					});
+					if(accepted){
+						const filter = {email: request.senderEmail};
+						const update = {$push: {friends: {'amount': request.amount, 'message': request.message, 'friendEmail': email, 'friendName': user.name}}};	//amount > 0 means friend sent us money
+						const filter2 = {email: email};
+						const update2 = {$push: {friends: {'amount': -request.amount, 'message': request.message, 'friendEmail': request.senderEmail, 'friendName': request.senderName}}};	//amount < 0 means we sent money to friend
+						await Expense.updateOne(filter,update)
+						.then(console.log('Friend Transaction Added Successfully!'))
+						.catch((err) => {
+							console.log(err);
+							console.log('Friend Transaction Adding Failed!')
+						});
+						await Expense.updateOne(filter2,update2)
+						.then(console.log('Friend Transaction Added Successfully!'))
+						.catch((err) => {
+							console.log(err);
+							console.log('Friend Transaction Adding Failed!')
+						});
+					}
+					res.redirect('http://localhost:3000/friend-finance');
+				}
+			}
+		}
+	}    
+})
+
 app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {title, Array of emails}
 	console.log('create group api called');
 	const token = req.headers['x-access-token'];
