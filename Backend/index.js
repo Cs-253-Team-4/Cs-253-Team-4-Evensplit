@@ -16,7 +16,7 @@ const splitwise = require('./Functions/splitwise')
 app.use(cors())
 app.use(express.json())
 
-const url = 'mongodb://localhost:27017/Cs-253';
+const url = 'mongodb+srv://evensplit:SSgqUwzAYpbCadWf@evensplit.dsgcmp4.mongodb.net/Data?retryWrites=true&w=majority';
 
 mongoose.connect(url, {
     useNewUrlParser: true,
@@ -94,7 +94,7 @@ app.post('/api/addExpense', async (req,res) => {    //headers = {'x-access-token
 			var title = req.body.title;
 			const amount = req.body.amount;
 			const filter = {email: email}; 
-			const update = {$push: {personal: {'Title': title, 'Amount': amount, 'Time': new Date()}}};
+			const update = {$push: {personal: {'Title': title, 'Amount': Number(amount), 'Time': new Date()}}};
 			if(amount != "₹"){
 				await Expense.updateOne(filter,update);
 				console.log('Personal Expense Added Successfully!')
@@ -218,7 +218,26 @@ app.get('/api/getFriendsHistory', async (req,res) => {
     
 })
 
-
+app.get('/api/getUsers', async (req,res) => {
+    console.log('get users api called');
+    const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{ 
+			const users = await User.find({},{name:1, email:1});
+			res.json({status: 'ok', users: users});
+		}
+	}
+    
+})
 
 app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {title, Array of emails}
 	console.log('create group api called');
