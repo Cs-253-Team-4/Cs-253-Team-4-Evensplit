@@ -13,10 +13,25 @@ import Navbar from "../components/Navbar";
 import { GlobalProvider } from "context/GlobalState";
 import { PendingListDisplay } from "@/components/PendingListDisplay";
 
-//import 'pages/App.css';
+//import 'pages/App.css';   
 
-    
-    
+async function handleRequest(index, accepted, request){
+  fetch('http://localhost:1337/api/deleteRequest', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': localStorage.getItem('token'),
+      },
+    body: JSON.stringify({
+        index: index,
+        accepted: accepted
+    }),  
+  }).then(res => {
+    return res.json()
+  }).then(data => {
+    location.reload();
+  })
+}
 
 function App() {
   const [friendHistory, setFriendHistory] = useState([])    
@@ -53,6 +68,7 @@ function App() {
       setUsers(data.users)
     }))
   }
+
   useEffect(() => {
     fetchUserData()
   }, [])
@@ -90,7 +106,7 @@ function App() {
             </h3>
             <div className="item-center m-2 p-3 overflow-auto max-h-64">
               <ul className="list flex flex-col justify-center item-center">
-                {PendingList.map((request) => {
+                {PendingList.map((request, index) => {
                   return (
                     <div
                       className="users flex items-center p-1 text-white w-100 m-1 min-w-0"
@@ -105,13 +121,15 @@ function App() {
                         Message: {request.message}
                       </p>
                       <div className="text-right">
-                        <button class="rounded-full w-15 py-0.5 px-3 m-1  bg-green-600 ">
+                        <form>
+                        <button class="rounded-full w-15 py-0.5 px-3 m-1  bg-green-600 " onClick={() => {handleRequest({index},true,{request})}}>
                           {" "}
                           Accept{" "}
                         </button>
-                        <button class="rounded-full w-15 py-0.5 px-2 m-1 bg-red-600">
+                        <button class="rounded-full w-15 py-0.5 px-2 m-1 bg-red-600" onClick={() => {handleRequest({index},false,{request})}}>
                           Decline
                         </button>
+                        </form>
                       </div>
                       {/* <p> {user.Amount}</p>
                       <p> {user.Description}</p> */}
@@ -142,7 +160,8 @@ function App() {
                       <div className="px-5 py-2 m-3 border-r-4 border-b-4 border-t-2 border-l-2 border-red-600 rounded-lg">
                         <p>
                           {" "}
-                          You paid {user.friendName} ({user.friendEmail}) ₹ {-user.amount}
+                          You paid {user.friendName} ({user.friendEmail}) ₹ {-user.amount}{" "}
+                          {user.message}
                         </p>
                         {/* <p> ₹ {user.Amount}</p>
                       <p> {user.Description}</p> */}
@@ -153,7 +172,8 @@ function App() {
                       <div className="px-5 py-2 m-3 border-r-4 border-b-4 border-t-2 border-l-2 border-green-600 rounded-lg ">
                         <p>
                           {" "}
-                          {user.friendName} ({user.friendEmail}) paid you ₹ {user.amount}
+                          {user.friendName} ({user.friendEmail}) paid you ₹ {user.amount}{" "}
+                          {user.message}
                         </p>
                         {/* <p> ₹ {user.Amount}</p>
                       <p> {user.Description}</p> */}
