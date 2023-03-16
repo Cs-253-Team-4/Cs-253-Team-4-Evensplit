@@ -54,27 +54,28 @@ app.post('/api/login', async (req, res) => {    //body = {email, password}
 	})
     console.log('login api called');
 	if (!user) {
-		return { status: 'error', error: 'Invalid login' }
+		res.json({ status: 'error', error: 'Invalid Login', user: false })
 	}
-
-	const isPasswordValid = await bcrypt.compare(
-		req.body.password,
-		user.password
-	)
-
-	if (isPasswordValid) {
-		const token = jwt.sign(
-			{
-				name: user.name,
-				email: user.email,
-			},
-			'secret123'
+	else{
+		const isPasswordValid = await bcrypt.compare(
+			req.body.password,
+			user.password
 		)
-		console.log('Login Successful!')
-		console.log(user.email);	
-		return res.json({ status: 'ok', user: token })
-	} else {
-		return res.json({ status: 'error', user: false })
+
+		if (isPasswordValid) {
+			const token = jwt.sign(
+				{
+					name: user.name,
+					email: user.email,
+				},
+				'secret123'
+			)
+			console.log('Login Successful!')
+			console.log(user.email);	
+			return res.json({ status: 'ok', user: token })
+		} else {
+			return res.json({ status: 'error', error: 'Invalid Login', user: false })
+		}
 	}
 })
 
@@ -124,6 +125,7 @@ app.get('/api/getPersonalExpenseHistory', async (req,res) => {  //headers = {'x-
 })
 
 app.post('/api/requestMoney', async (req,res) => {    //body = {friendEmail, amount, message}
+	console.log('request money api called');
 	const token = req.headers['x-access-token'];
     if(!token){
 		res.json({status: 'error', error: 'Invalid token'});
