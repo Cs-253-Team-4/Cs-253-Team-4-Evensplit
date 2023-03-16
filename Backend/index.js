@@ -16,7 +16,7 @@ const splitwise = require('./Functions/splitwise')
 app.use(cors())
 app.use(express.json())
 
-const url = 'mongodb://localhost:27107/Cs-253';
+const url = 'mongodb://localhost:27017/Cs-253';
 
 mongoose.connect(url, {
     useNewUrlParser: true,
@@ -211,33 +211,14 @@ app.get('/api/getFriendsHistory', async (req,res) => {
 			res.json({status: 'error', error: 'Invalid token'});
 		}
 		else{ 
-			const userExpense = await Expense.findOne({email: email},{friends: 1});
-			res.json({status: 'ok', friendsHistory: userExpense.friends});
+			const userExpense = await Expense.findOne({email: email});
+			res.json({status: 'ok', friendsHistory: userExpense.friends, requests: userExpense.requests});
 		}
 	}
     
 })
 
-app.get('/api/getFriendRequests', async (req,res) => {
-    console.log('get friends requests api called');
-    const token = req.headers['x-access-token'];
-    if(!token){
-		res.json({status: 'error', error: 'Invalid token'});
-	}
-	else{
-        const decoded = jwt.verify(token,'secret123');
-        const email = decoded.email;
-		const user = await User.findOne({email: email});
-		if(!user){
-			res.json({status: 'error', error: 'Invalid token'});
-		}
-		else{ 
-			const userExpense = await Expense.findOne({email: email},{requests: 1});
-			res.json({status: 'ok', friendRequests: userExpense.requests});
-		}
-	}
-    
-})
+
 
 app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {title, Array of emails}
 	console.log('create group api called');
