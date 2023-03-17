@@ -12,7 +12,7 @@ export default function homepage(){
     <Navbar></Navbar>
     <div className="flex justify-center m-40">
       <div className="w-1/2 flex justify-center">
-        <Link href={"/"}>
+        <Link href={"/calendar"}>
           <div className="text-3xl font-bold text-blue-500 hover:text-4xl h-40 w-40 "><img src="https://i.ibb.co/m9MMrsD/Screenshot-2023-02-02-185300.png" alt="Screenshot-2023-02-02-185300" border="0"/>CALENDAR</div>
           {/* <h1 className="text-3xl font-bold text-blue-500 hover:text-4xl">CALENDAR</h1> */}
         </Link>
