@@ -37,10 +37,6 @@ export default function Home() {
   }
   return (
     <>
-      <Head>
-        <title>EventSplIIT</title>
-        <link rel="icon" href="https://i.ibb.co/JvG6Lzn/logo-new.png" />
-      </Head>
 
       <main className="flex flex-col items-center justify-center flex-1 text-center m-10 ">
         <div className="bg-white rounded-2xl shadow-2xl flex w-2/3 max-w-4xl">
