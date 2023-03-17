@@ -1,21 +1,6 @@
 import React from "react";
-// import { Graph } from 'react-d3-graph'
-// import {
-//   TextField,
-//   Button,
-//   FormControl,
-//   InputLabel,
-//   Select,
-//   MenuItem,
-//   TableCell,
-//   TableContainer,
-//   Paper,
-//   Table,
-//   TableHead,
-//   TableRow,
-//   TableBody,
-//   Grid,
-// } from '@material-ui/core';
+import { Graph } from 'react-d3-graph'
+import {Grid} from '@material-ui/core';
 import { useState, useEffect } from 'react';
 // import { Header } from 'components/Header';
 // import { IncomeExpenses } from 'components/IncomeExpenses';
@@ -37,27 +22,103 @@ function App() {
   const [members, setMembers] = useState([]);   
   const [expenses, setExpenses] = useState([]);   
   const [simplifiedTransactions, setSimplifiedTransactions] = useState([]);   
-//   const [items, setItems] = useState([])
-//   const [outputList, setOutputList] = useState([])
-//   const [inputGraphData, setInputGraphData] = useState({})
-//   const [inputGraphConfig, setInputGraphConfig] = useState({})
-//   const [outputGraphData, setOutputGraphData] = useState({})
+  const [inputGraphConfig, setInputGraphConfig] = useState({})
+  const [outputGraphData, setOutputGraphData] = useState({})
   const keys = ["name", "email"];
-//   const generateNodes = () => members.map(item => ({ id: item.email }))
-//   const generateLinks = () => simplifiedTransactions.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }))
-//   const generateOutputLinks = (items) => items.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }))
-  const search = (data) => {
-      return data.filter((item) =>
-          keys.some((key) => item[key].toLowerCase().includes(query))
-      );
+  const config = {
+    freezeAllDragEvents: true,
+    nodeHighlightBehavior: true,
+    node: {
+      color: "lightblue",
+      highlightStrokeColor: "blue",
+      fontSize: 18,
+    },
+    link: {
+      highlightColor: "lightblue",
+      renderLabel: true,
+      labelProperty: "amount",
+      fontSize: 18,
+    },
+    directed: true,
+    height: 1000,
+    width: 1000,
+    // d3: {
+    //   force: {
+    //     x: 30,
+    //     y: 30,
+    //     z: 0.05
+    //   }
+    // }
+    // automaticRearrangeAfterDropNode: true,
+    // collapsible: true,
+    // height: 700,
+    // width: '100%',
+    // highlightDegree: 1,
+    // highlightOpacity: 1,
+    // linkHighlightBehavior: false,
+    // maxZoom: 8,
+    // minZoom: 0.1,
+    // focusZoom: 1,
+    // focusAnimationDuration: 0.75,
+    // nodeHighlightBehavior: false,
+    // panAndZoom: false,
+    // staticGraph: false,
+    // d3: {
+    //   alphaTarget: 0.05,
+    //   gravity: -100,
+    //   linkLength: 100,
+    //   linkStrength: 1
+    // },
+    // node: {
+    //   color: '#d3d3d3',
+    //   fontColor: 'black',
+    //   fontSize: 8,
+    //   fontWeight: 'normal',
+    //   highlightColor: 'SAME',
+    //   highlightFontSize: 8,
+    //   highlightFontWeight: 'normal',
+    //   highlightStrokeColor: 'SAME',
+    //   highlightStrokeWidth: 1.5,
+    //   labelProperty: 'id',
+    //   mouseCursor: 'pointer',
+    //   opacity: 1,
+    //   renderLabel: true,
+    //   size: 200,
+    //   strokeColor: 'none',
+    //   strokeWidth: 1.5,
+    //   svg: '',
+    //   symbolType: 'circle',
+    //   viewGenerator: null
+    // },
+    // link: {
+    //   color: '#d3d3d3',
+    //   highlightColor: '#d3d3d3',
+    //   mouseCursor: 'pointer',
+    //   opacity: 1,
+    //   semanticStrokeWidth: false,
+    //   renderLabel: true,
+    //   labelProperty: 'amount',
+    //   strokeWidth: 1.5,
+    //   type: 'STRAIGHT'
+    // },
+    // directed: true
   }; 
+  const randomPosition = () => ({
+    x: Math.random() * 1000,
+    y: Math.random() * 1000,
+  });
+  const search = (data) => {
+    return data.filter((item) =>
+    keys.some((key) => item[key].toLowerCase().includes(query))
+      );
+  };
   const fetchUserData = async () => {
     const searchParams = new URLSearchParams(window.location.search);
     const groupID = searchParams.get('id');
     fetch('http://localhost:1337/api/getParticularGroup', {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
           'x-access-token': localStorage.getItem('token'),
         },
       body: JSON.stringify({
@@ -69,28 +130,19 @@ function App() {
       setGroup(data.group);
       setMembers(data.group.members);
       setExpenses(data.group.expenses.reverse());
-    }).then(fetch('http://localhost:1337/api/simplify', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': localStorage.getItem('token'),
-        },
-        body :JSON.stringify({
-          'groupID' : groupID,
-        })
-    }).then(res => {
-      return res.json()
-    }).then(data => {
-        setSimplifiedTransactions(data.simplifiedTransactions);
-//         setOutputList(data.simplifiedTransactions);
-//         setOutputGraphData({nodes : generateNodes(), links: generateOutputLinks(data.simplifiedTransactions)})
-    }))
+      setSimplifiedTransactions(data.simplifiedTransactions);
+      setOutputGraphData({nodes : data.group.members.map(item => ({ id: item.email, x: Math.random(), y: Math.random() })), links: data.simplifiedTransactions.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }))});
+      setInputGraphConfig(config);
+    })
   }
 
+  // const generateNodes = async () => members.map(item => ({ id: item.email }));
+  // const generateOutputLinks = async (items) => items.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }));
+  
   useEffect(() => {
     fetchUserData()
   }, [])
-
+  
   return (
     <GlobalProvider>
       <Navbar></Navbar>
@@ -122,22 +174,7 @@ function App() {
                   );
                 })}
               </div>
-              {/* <div>
-              <Grid item xs={12} md={6}>
-              {
-                Object.keys(outputGraphData).length && Object.keys(inputGraphConfig).length ? (
-                  <>
-                    <h5>Graph generated from the solution of algorithm</h5>
-                    <Graph
-                      id="graph-id-output" // id is mandatory
-                      data={outputGraphData}
-                      config={inputGraphConfig}
-                    />
-                  </>
-                ) : null
-              }
-              </Grid>
-              </div> */}
+              
               {/* </form> */}
             </div>
           </div>
@@ -226,6 +263,26 @@ function App() {
             </div>
           </div>
         </div>
+        <div className="w-3/3 flex flex-col items-center p-7 m-5 mx-auto rounded-2xl shadow-2xl">
+            <Grid container>
+              <Grid item>
+              <br/><br/><br/><br/>
+              { 
+                Object.keys(outputGraphData).length && Object.keys(inputGraphConfig).length ? (
+                  <>
+                    <br/><br/>
+                    <Graph
+                      id="graph-id" // id is mandatory
+                      data={outputGraphData}
+                      config={inputGraphConfig}
+                    />
+                    <br/><br/>
+                  </>
+                ) : null
+              }
+              </Grid>
+              </Grid>
+              </div>
       </main>
     </GlobalProvider>
   );
