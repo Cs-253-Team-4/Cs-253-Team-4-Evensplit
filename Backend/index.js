@@ -182,6 +182,10 @@ app.post('/api/addFriendTransaction', async (req,res) => {    //body = {friendEm
 			const update = {$push: {friends: {'amount': amount, 'message': message, 'friendEmail': email, 'friendName': user.name}}};	//amount > 0 means friend sent us money
 			const filter2 = {email: email};
 			const update2 = {$push: {friends: {'amount': -amount, 'message': message, 'friendEmail': friendEmail, 'friendName': friend.name}}};	//amount < 0 means we sent money to friend
+			const filter3 = {email: email};
+			const update3 = {$push: {personal: {'Amount': -amount, 'Title': `You paid ${friend.name} (${friendEmail})`, 'Time' : new Date()}}};	//amount < 0 means we sent money to friend
+			const filter4 = {email: friendEmail};
+			const update4 = {$push: {personal: {'Amount': amount, 'Title': `You received from ${user.name} (${email})`, 'Time' : new Date()}}};	//amount < 0 means we sent money to friend
 			await Expense.updateOne(filter,update)
 			.then(console.log('Friend Transaction Added Successfully!'))
 			.catch((err) => {
@@ -189,6 +193,18 @@ app.post('/api/addFriendTransaction', async (req,res) => {    //body = {friendEm
 				console.log('Friend Transaction Adding Failed!')
 			});
 			await Expense.updateOne(filter2,update2)
+			.then(console.log('Friend Transaction Added Successfully!'))
+			.catch((err) => {
+				console.log(err);
+				console.log('Friend Transaction Adding Failed!')
+			});
+			await Expense.updateOne(filter3,update3)
+			.then(console.log('Friend Transaction Added Successfully!'))
+			.catch((err) => {
+				console.log(err);
+				console.log('Friend Transaction Adding Failed!')
+			});
+			await Expense.updateOne(filter4,update4)
 			.then(console.log('Friend Transaction Added Successfully!'))
 			.catch((err) => {
 				console.log(err);
@@ -315,16 +331,18 @@ app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' 
 		}
 		else{ 
 			var i;
-			console.log(req.body.members);
 			const title = req.body.title;
 			var members = req.body.members;
 			members.push({email: email});
-			console.log(members);
+			var members_with_name = [];
+			for(i=0;i<req.body.members.length;i++){
+				var member = await User.findOne({email: req.body.members[i].email},{name:1});
+				members_with_name.push({email: req.body.members[i].email, name: member.name})
+			}
 			const newGroup = await Group.create({
 				title: title,
-				members: members,
+				members: members_with_name,
 			})
-			console.log(newGroup);
 			for(i=0;i<members.length;i++){
 				await Expense.updateOne({email: members[i].email},{$push: {groups: {'groupID': newGroup._id}}})
 			} 
@@ -350,12 +368,15 @@ app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-t
 		else{
 			const groupID = req.body.groupID;
 			const amount = req.body.amount;
-			const returners = req.body.returners;
+			var returners = [];
 			const message = req.body.message;
-			// const reciever_email=req.body
+			var i;
+			for(i=0;i<req.body.returners.length;i++){
+				const returner = await User.findOne({email: req.body.returners[i].email}, {name:1, email:1});
+				returners.push({email: returner.email, name: returner.name})
+			}
 			const filter = {_id: groupID};
-			// const 
-			const update = {$push: {expenses : {'payer': email, 'returners': returners,'Amount': amount, 'Message': message}}};
+			const update = {$push: {expenses : {'payer': {'email': email, 'name': user.name}, 'returners': returners,'Amount': amount, 'Message': message}}};
 			await Group.updateOne(filter,update);
 			res.json({status: 'ok'});
 		}
@@ -381,9 +402,36 @@ app.get('/api/getGroups', async (req,res) => {	//headers = {'x-access-token' : t
 			var groups = [];
 			var i;
 			for(i=0;i<groupIDs.groups.length;i++){
-				groups.push(await Group.findOne({_id: groupIDs.groups[i].groupID}));
+				groups.push(await Group.findOne({_id: groupIDs.groups[i].groupID},{title:1}));
 			}
 			res.json({status: 'ok', groups: groups});
+		}        
+	}    
+})
+
+app.post('/api/getParticularGroup', async (req,res) => {
+	console.log('get particular group api called');
+    const token = req.headers['x-access-token'];
+	if(!token){
+		res.json({status: 'error', error: 'Invalid token'})
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'})
+		}
+		else{
+			const groupIDs = await Expense.findOne({email: email},{groups: 1}); 
+			const id = req.body.id;
+			if(id == null){
+				res.json({status: 'error'});
+			}
+			else{
+				const group = await Group.findOne({_id: id});			
+				res.json({status: 'ok', group: group});
+			}
 		}        
 	}    
 })
