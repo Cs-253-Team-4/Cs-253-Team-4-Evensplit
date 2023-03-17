@@ -118,7 +118,6 @@ async function splitwise(transactionsArray) {
 			push_heap(negative, p2.first - p1.first, p2.second);
 		}
 	}
-	console.log(result);
 	return result;
 }
 
