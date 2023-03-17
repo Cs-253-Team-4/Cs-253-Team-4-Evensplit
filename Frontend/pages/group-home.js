@@ -1,20 +1,71 @@
 import React from "react";
+import { useState, useEffect } from 'react';
 import ContactCard from "../components/groups-component/ContactCard";
-import groups from "../components/groups-component/groups";
+// import groups from "../components/groups-component/groups";
 import Navbar from "../components/Navbar";
+import Avatar from "../components/groups-component/Avatar";
+import Detail from "../components/groups-component/Detail";
+import Name from "../components/groups-component/Name";
 // import MakeCards from "./MakeCards";
 // import Avatar from "./Avatar";
 
 // const nam = contacts;
 
 function App() {
-  return (
+  const [groups, setGroups] = useState([])   
+  const [query , setQuery] = useState("");
+  const keys = ["title"]
+  const search = (data) => {
+      return data.filter((item) =>
+          keys.some((key) => item[key].toLowerCase().includes(query))
+      );
+  }; 
+  const fetchUserData = () => {
+    fetch('http://localhost:1337/api/getGroups', {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': localStorage.getItem('token'),
+        }
+    }).then(res => {
+      return res.json()
+    }).then(data => {
+      setGroups(data.groups.reverse())
+    })
+  }
 
+  useEffect(() => {
+    fetchUserData()
+  }, [])
+
+  return (
     <div>
       <Navbar></Navbar>
       <h1 className="heading">My Groups</h1>
       {/* <div className="card-container">{groups.map(ContactCard)}</div> */}
-      <ContactCard/>
+      {/* <ContactCard/> */}
+      <div>
+        <form className='flex justify-center mt-3 pt-5'>
+            <input className="search w-80 content-center text-center border-2 border-gray-600 bg-gray-100 mb-0 mt-3 p-1 text-black rounded-full" placeholder="Search..." onChange={(e) => setQuery(e.target.value.toLowerCase())} />
+        </form>
+        <div className='overflow-auto card-container'>
+          {search(groups).map((group) => (
+            <div className="card-box">
+            {/* <a href="./particular-group"> */}
+              <button className="card" onClick={() => window.location.href = './particular-group/?id='+`${group._id}`}>
+                <div className="top">
+                  {/* <p>{props.keyy}</p> */}
+                  <Name name={group.title} />
+                  {/* <Avatar imgURL={props.imgURL} /> */}
+                  <Avatar imgURL={'https://png.pngtree.com/png-clipart/20190904/original/pngtree-icon-people-group.-icon-people-network.-connection-people-png-image_4459398.jpg'} />
+                </div>
+                <Detail balance="100" email="yo@;lksad" />
+              </button>
+            {/* </a> */}
+          </div>
+          ))}
+        </div>
+      </div>
       {/* //   <Avatar imgsrc="https://media.licdn.com/dms/image/C5603AQEWw0FH_H6RCw/profile-displayphoto-shrink_800_800/0/1517580260726?e=2147483647&v=beta&t=aNMOb_GobO695V_7He-GNXay-K6apDPjEuWWg3sJSIg" /> */}
     </div>
   );
