@@ -82,8 +82,8 @@ function App() {
       return res.json()
     }).then(data => {
         setSimplifiedTransactions(data.simplifiedTransactions);
-        setOutputList(data.simplifiedTransactions);
-        setOutputGraphData({nodes : generateNodes(), links: generateOutputLinks(data.simplifiedTransactions)})
+//         setOutputList(data.simplifiedTransactions);
+//         setOutputGraphData({nodes : generateNodes(), links: generateOutputLinks(data.simplifiedTransactions)})
     }))
   }
 
