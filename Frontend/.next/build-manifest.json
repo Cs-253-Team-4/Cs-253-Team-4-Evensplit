@@ -25,10 +25,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/personal-finance": [
+    "/calendar": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/personal-finance.js"
+      "static/chunks/pages/calendar.js"
     ]
   },
   "ampFirstPages": []
