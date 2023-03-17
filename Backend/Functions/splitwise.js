@@ -61,7 +61,7 @@ function transaction_builder(transactions){
 	var i,j;
 	for(i=0;i<transactions.length;i++){
 		for(j=0;j<transactions[i].returners.length;j++){
-			new_transactions.push({'person1':transactions[i].payer, 'person2': transactions[i].returners[j].email, 'amount': (transactions[i].amount)/(transactions[i].returners.length)});
+			new_transactions.push({'person1':transactions[i].payer.email, 'person2': transactions[i].returners[j].email, 'amount': (transactions[i].Amount)/(transactions[i].returners.length)});
 		}
 	}
 	return new_transactions;
@@ -70,7 +70,7 @@ function transaction_builder(transactions){
 // transactions = [{person1: 'pulkit', person2: 'deepak', amount: 100}]
 async function splitwise(transactionsArray) {
 	// transactions array will store an object of expense class
-	var transactions = await transaction_builder(transactionsArray);
+	var transactions = transaction_builder(transactionsArray);
 	var net_balance = {}; // hashmap or also called as object in js
 	for(var i = 0; i < transactions.length; i++) {
 		var e = transactions[i]; // e is an object of expense class
