@@ -72,7 +72,7 @@ app.post('/api/login', async (req, res) => {    //body = {email, password}
 			)
 			console.log('Login Successful!')
 			console.log(user.email);	
-			return res.json({ status: 'ok', user: token })
+			return res.json({ status: 'ok', user: token, email: user.email })
 		} else {
 			return res.json({ status: 'error', error: 'Invalid Login', user: false })
 		}
@@ -168,15 +168,15 @@ app.post('/api/addFriendTransaction', async (req,res) => {    //body = {friendEm
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		const friend = await User.findOne({email: req.body.friendEmail});
+		const amount = req.body.amount;
 		if(!user){
 			res.json({status: 'error', error: 'Invalid token'});
 		}
-		else if(!friend){
-			res.json({status: 'error', error: 'Invalid Friend Email'});
+		else if(!friend || !amount){
+			res.json({status: 'error'});
 		}
 		else{ 
 			var friendEmail = req.body.friendEmail;
-			var amount = req.body.amount;
 			var message = req.body.message;
 			const filter = {email: friendEmail};
 			const update = {$push: {friends: {'amount': amount, 'message': message, 'friendEmail': email, 'friendName': user.name}}};	//amount > 0 means friend sent us money
@@ -422,15 +422,16 @@ app.post('/api/getParticularGroup', async (req,res) => {
 		if(!user){
 			res.json({status: 'error', error: 'Invalid token'})
 		}
-		else{
-			const groupIDs = await Expense.findOne({email: email},{groups: 1}); 
+		else{ 
 			const id = req.body.id;
 			if(id == null){
 				res.json({status: 'error'});
 			}
 			else{
-				const group = await Group.findOne({_id: id});			
-				res.json({status: 'ok', group: group});
+				const group = await Group.findOne({_id: id});
+				var transactionsArray = group.expenses;
+				var simplifiedTransactions = await splitwise(transactionsArray);			
+				res.json({status: 'ok', group: group, simplifiedTransactions: simplifiedTransactions});
 			}
 		}        
 	}    
@@ -481,31 +482,31 @@ app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : t
      
 })
 
-app.post('/api/simplify', async (req,res) =>{	//headers = {'x-access-token' : token}, body = {groupID }
+// app.post('/api/simplify', async (req,res) =>{	//headers = {'x-access-token' : token}, body = {groupID }
 
-	console.log('simplify api called');
-    const token = req.headers['x-access-token'];
-	if(!token){
-		res.json({status: 'error', error: 'Invalid token'});
-	}
-	else{
-        const decoded = jwt.verify(token,'secret123');
-        const email = decoded.email;
-		const user = await User.findOne({email: email});
-		if(!user){
-			res.json({status: 'error', error: 'Invalid token'});
-		} 
-		else{
-			const groupID = req.body.groupID;
-			const filter = {_id: groupID};
-			const group = await Group.findOne(filter);
-			var transactionsArray = group.expenses;
-			var simplifiedTransactions = await splitwise(transactionsArray);
-			res.json({status: 'ok', simplifiedTransactions: simplifiedTransactions});
-		}
-	}
+// 	console.log('simplify api called');
+//     const token = req.headers['x-access-token'];
+// 	if(!token){
+// 		res.json({status: 'error', error: 'Invalid token'});
+// 	}
+// 	else{
+//         const decoded = jwt.verify(token,'secret123');
+//         const email = decoded.email;
+// 		const user = await User.findOne({email: email});
+// 		if(!user){
+// 			res.json({status: 'error', error: 'Invalid token'});
+// 		} 
+// 		else{
+// 			const groupID = req.body.groupID;
+// 			const filter = {_id: groupID};
+// 			const group = await Group.findOne(filter);
+// 			var transactionsArray = group.expenses;
+// 			var simplifiedTransactions = await splitwise(transactionsArray);
+// 			res.json({status: 'ok', simplifiedTransactions: simplifiedTransactions});
+// 		}
+// 	}
 
-})
+// })
 
 // app.get('/api/getEvents', async (req,res) => {	//headers = {'x-access-token' : token}
 // 	console.log('get events api called');
