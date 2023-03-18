@@ -81,10 +81,10 @@ const App = () => {
                       <div className="w-1/3 flex pu-7 m-5 justify-center rounded-2xl shadow-2xl">
                       <div className='justify-end m-2 p-3'>
                         <h3 className='text-2xl font-bold text-gray-500 m-2'>History</h3>
-                        <ul className="list" style={{textAlign:"center", width:"300px"}}>
+                        <ul className="list" style={{textAlign:"left", width:"300px"}}>
                           {/* {tempdata.map(transaction => (<Transaction key={transaction.Title} transaction={transaction} />))} */}
                           {users.map(user => (
-                                <li className={user.Amount < 0 ? 'minus' : 'plus'} key={user.Time}>₹  {user.Amount} {user.Title}</li>
+                                <li className={user.Amount < 0 ? 'minus' : 'plus'} key={user.Time}>₹  {user.Amount} <br/>{user.Title}</li>
                               
                           ))}
                         </ul>
