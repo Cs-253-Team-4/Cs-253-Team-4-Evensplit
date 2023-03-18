@@ -90,7 +90,8 @@ function App() {
                       <input className="search w-80 text-center border-2 border-gray-600 bg-gray-100 m-1 p-1 text-black rounded-full" placeholder="Search..." onChange={(e) => setQuery(e.target.value.toLowerCase())} />
                   <div className="overflow-auto h-64">
                       {search(users).map((item) => (
-                          <button key={item._id} className="w-80 px-5 py-2 m-1 bg-cyan-300 rounded-lg hover:bg-blue-700" > 
+                        item.email == localStorage.getItem('user') ? null :
+                          <button key={item._id} className="px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80" onClick={(e) => {e.preventDefault(); navigator.clipboard.writeText(item.email); alert('Email Copied to Clipboard')}}> 
                               <p> {item.name}</p>
                               <p> {item.email}</p>
                           </button>
