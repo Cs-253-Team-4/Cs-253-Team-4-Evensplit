@@ -64,6 +64,9 @@ function App() {
             {/* </a> */}
           </div>
           ))}
+          <button className="btn" style={{width:"50%"}} onClick={(e) => {e.preventDefault(); window.location.href='./group-form'}}>
+          Create New Group
+          </button>
         </div>
       </div>
       {/* //   <Avatar imgsrc="https://media.licdn.com/dms/image/C5603AQEWw0FH_H6RCw/profile-displayphoto-shrink_800_800/0/1517580260726?e=2147483647&v=beta&t=aNMOb_GobO695V_7He-GNXay-K6apDPjEuWWg3sJSIg" /> */}
