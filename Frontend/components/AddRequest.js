@@ -2,21 +2,34 @@ import React, { useState, useContext } from "react";
 import { GlobalContext2 } from "../context/GlobalState2";
 
 export const AddRequest = () => {
-  const [text, setText] = useState("");
+  const [friendEmail, setFriendEmail] = useState("");
   const [amount, setAmount] = useState("₹");
+  const [text, setText] = useState("");
 
   const { addRequest } = useContext(GlobalContext2);
 
-  const onSubmit = (e) => {
-    e.preventDefault();
+  const onSubmit = async (e) => {
+    // e.preventDefault();
 
-    const newRequest = {
-      id: Math.floor(Math.random() * 100000000),
-      text,
-      amount: +amount,
-    };
-
-    addRequest(newRequest);
+    const token = localStorage.getItem('token');
+    if(!token){
+      window.location.href = ('/');
+    }
+    else{
+      const res = await fetch('http://localhost:1337/api/requestMoney', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'x-access-token': token,
+          },
+          body: JSON.stringify({
+              friendEmail: friendEmail,  
+              amount: amount,
+              message: text,
+          }),
+      });
+      const data = await res.json();
+    }
   };
 
   return (
@@ -27,7 +40,17 @@ export const AddRequest = () => {
       >
         Add Request
       </h3>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} className="h-72">
+        <div className="form-control align-center justify-center flex m-2">
+            {/* <label htmlFor="text" className='mr-3'>Text</label> */}
+            <input
+                className="text-gray-400 bg-gray-100 outline-none flex-1 rounded-xl p-2 pl-5 mb-2"
+                type="email"
+                value={friendEmail}
+                onChange={(e) => setFriendEmail(e.target.value)}
+                placeholder="Enter email of friend...."
+            />
+        </div>
         <div className="form-control align-center justify-center flex m-2">
           {/* <label htmlFor="text" className='mr-3'>Text</label> */}
           <input
@@ -35,7 +58,7 @@ export const AddRequest = () => {
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Add new Request...."
+            placeholder="Add new transaction...."
           />
         </div>
         <div className="form-control align-center justify-center flex m-2">
@@ -54,7 +77,7 @@ export const AddRequest = () => {
           {/* <label htmlFor="text" className='mr-3'>Text</label> */}
           {/* <input type="date" name="Date" className='text-gray-400 bg-gray-100 outline-none flex-1 rounded-xl p-1.5 pl-5 mb-2'/> */}
         </div>
-        <button className="btn">Add Request</button>
+        <button className="btn">Request Money</button>
       </form>
     </>
   );
