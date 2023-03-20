@@ -1,7 +1,9 @@
 import Link from "next/link";
 const NavItem = ({ text, href, active }) => {
   if (text === "Sign-Out") {
-    window.localStorage.setItem("token", "");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("token", "");
+    }
     return (
       <Link href={href} className={`nav__link`}>
         {text}
