@@ -1,378 +1,559 @@
-import React from "react";
-import { Graph } from 'react-d3-graph'
-import {Grid} from '@material-ui/core';
-import { useState, useEffect } from 'react';
-// import { Header } from 'components/Header';
-// import { IncomeExpenses } from 'components/IncomeExpenses';
-import { GroupHistory } from "../components/groups-component/GroupHistory";
+const express = require('express')
+const app = express()
+const cors = require('cors')
+const mongoose = require('mongoose')
+const User = require('./models/user.model')
+const Expense = require('./models/expense.model')
+const Group = require('./models/group.model')
+const Calendar = require('./models/calendar.model')
+const Event = require('./models/event.model')
+const Global = require('./models/globalEvents.model')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 
-// import { TransactionList } from 'components/TransactionList';
-// import { AddRequest } from '../components/AddRequest';
-import { AddGroupTransaction } from "../components/groups-component/AddGroupTransaction";
-import Checkbox from "../components/groups-component/Checkbox";
-import Navbar from "../components/Navbar";
+const splitwise = require('./Functions/splitwise')
 
-import { GlobalProvider } from "context/GlobalState";
-import { SettleUp } from "../components/groups-component/GroupSettle";
-import { Transaction } from "@/components/Transaction";
+app.use(cors())
+app.use(express.json())
 
-//import 'pages/App.css';
+const url = 'mongodb+srv://evensplit:SSgqUwzAYpbCadWf@evensplit.dsgcmp4.mongodb.net/Data?retryWrites=true&w=majority';
 
+mongoose.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log("Database connection is Successfull!");
+}).catch((err) => {
+    console.log("Error :(");
+    console.log(err);
+});
 
-function App() {    
-  const [group, setGroup] = useState([]);
-  const [members, setMembers] = useState([]);   
-  const [expenses, setExpenses] = useState([]);   
-  const [simplifiedTransactions, setSimplifiedTransactions] = useState([]);   
-  const [inputGraphConfig, setInputGraphConfig] = useState({})
-  const [outputGraphData, setOutputGraphData] = useState({});
-  const [text, setText] = useState("");
-  const [amount, setAmount] = useState("₹");
-  const [isCheckAll, setIsCheckAll] = useState(false);
-  const [isCheck, setIsCheck] = useState([]);
-  const [list, setList] = useState([]);
-  const keys = ["name", "email"];
-  var groupID;
-  const config = {
-    freezeAllDragEvents: true,
-    // nodeHighlightBehavior: true,
-    node: {
-      color: "red",
-      highlightStrokeColor: "blue",
-      fontSize: 16,
-    },
-    link: {
-      color: "black",
-      highlightColor: "lightblue",
-      renderLabel: true,
-      labelProperty: "amount",
-      fontSize: 16,
-    },
-    directed: true,
-    height: 1000,
-    width: 1000,
+app.post('/api/register', async (req, res) => { //body = {name, email, password}
+		const user = await User.findOne({email: req.body.email});
+		if(!user){
+			const str = req.body.email;
+			var domain = str.substring(
+				str.indexOf("@") + 1);
+			if(domain!="iitk.ac.in"){
+				res.json({ status: 'error', error: 'Wrong email' })
+			}
+			else{
+				const newPassword = await bcrypt.hash(req.body.password, 10)
+				await User.create({
+					name: req.body.name,
+					email: req.body.email,
+					password: newPassword,
+					isAdmin: false,
+				}).then(Expense.create({email: req.body.email})).then(Calendar.create({email: req.body.email}));
+				res.json({ status: 'ok' });
+				console.log('User registered successfully!');
+			}
+		}
+		else{
+			console.log('User already registered');
+			res.json({ status: 'error', error: 'Duplicate email' })
+		}
+	
+})
+
+app.post('/api/login', async (req, res) => {    //body = {email, password}
+	const user = await User.findOne({
+		email: req.body.email,
+	})
+    console.log('login api called');
+	if (!user) {
+		res.json({ status: 'error', error: 'Invalid Login', user: false })
+	}
+	else{
+		const isPasswordValid = await bcrypt.compare(
+			req.body.password,
+			user.password
+		)
+
+		if (isPasswordValid) {
+			const token = jwt.sign(
+				{
+					name: user.name,
+					email: user.email,
+				},
+				'secret123'
+			)
+			console.log('Login Successful!')
+			console.log(user.email);	
+			return res.json({ status: 'ok', user: token, email: user.email })
+		} else {
+			return res.json({ status: 'error', error: 'Invalid Login', user: false })
+		}
+	}
+})
+
+app.post('/api/addExpense', async (req,res) => {    //headers = {'x-access-token' : token}, body = {title, amount}
+    const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{
+			var title = req.body.title;
+			const amount = req.body.amount;
+			const filter = {email: email}; 
+			const update = {$push: {personal: {'Title': title, 'Amount': Number(amount), 'Time': new Date()}}};
+			if(amount != "₹"){
+				await Expense.updateOne(filter,update);
+				console.log('Personal Expense Added Successfully!')
+			}
+		}
+	}      
+})
+
+app.get('/api/getPersonalExpenseHistory', async (req,res) => {  //headers = {'x-access-token' : token}
+    console.log('personal history api called');
+    const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+    else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email; 
+		const user = await User.findOne({email:email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{
+			const userExpense = await Expense.findOne({email: email},{personal: 1});
+			res.json({status: 'ok', personalExpenseHistory: userExpense.personal});
+		}    
+	}       
+})
+
+app.post('/api/requestMoney', async (req,res) => {    //body = {friendEmail, amount, message}
+	console.log('request money api called');
+	const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+    else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		const friend = await User.findOne({email: req.body.friendEmail});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else if(!friend){
+			res.json({status: 'error', error: 'Invalid Friend Email'});
+		}
+		else{ 
+			var friendEmail = req.body.friendEmail;
+			var amount = req.body.amount;
+			var message = req.body.message;
+			const filter = {email: friendEmail};
+			const update = {$push: {requests: {'amount': amount, 'message': message, 'senderEmail': email, 'senderName': user.name, 'resolved': false}}};
+			Expense.updateOne(filter,update)
+			.then(console.log('Request of Money to Friend Sent Successfully!'))
+			.catch((err) => {
+				console.log(err);
+				console.log('Request Sending Failed!')
+			});
+			res.json({status: 'ok'});
+		}
+	}    
+})
+
+app.post('/api/addFriendTransaction', async (req,res) => {    //body = {friendEmail, amount, message}
+	const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+    else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		const friend = await User.findOne({email: req.body.friendEmail});
+		const amount = req.body.amount;
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else if(!friend || !amount){
+			res.json({status: 'error'});
+		}
+		else{ 
+			var friendEmail = req.body.friendEmail;
+			var message = req.body.message;
+			const filter = {email: friendEmail};
+			const update = {$push: {friends: {'amount': amount, 'message': message, 'friendEmail': email, 'friendName': user.name}}};	//amount > 0 means friend sent us money
+			const filter2 = {email: email};
+			const update2 = {$push: {friends: {'amount': -amount, 'message': message, 'friendEmail': friendEmail, 'friendName': friend.name}}};	//amount < 0 means we sent money to friend
+			const filter3 = {email: email};
+			const update3 = {$push: {personal: {'Amount': -amount, 'Title': `You paid ${friend.name} (${friendEmail})`, 'Time' : new Date()}}};	//amount < 0 means we sent money to friend
+			const filter4 = {email: friendEmail};
+			const update4 = {$push: {personal: {'Amount': amount, 'Title': `You received from ${user.name} (${email})`, 'Time' : new Date()}}};	//amount < 0 means we sent money to friend
+			await Expense.updateOne(filter,update)
+			.then(console.log('Friend Transaction Added Successfully!'))
+			.catch((err) => {
+				console.log(err);
+				console.log('Friend Transaction Adding Failed!')
+			});
+			await Expense.updateOne(filter2,update2)
+			.then(console.log('Friend Transaction Added Successfully!'))
+			.catch((err) => {
+				console.log(err);
+				console.log('Friend Transaction Adding Failed!')
+			});
+			await Expense.updateOne(filter3,update3)
+			.then(console.log('Friend Transaction Added Successfully!'))
+			.catch((err) => {
+				console.log(err);
+				console.log('Friend Transaction Adding Failed!')
+			});
+			await Expense.updateOne(filter4,update4)
+			.then(console.log('Friend Transaction Added Successfully!'))
+			.catch((err) => {
+				console.log(err);
+				console.log('Friend Transaction Adding Failed!')
+			});
+			res.json({status: 'ok'});
+		}
+	}    
+})
+
+app.get('/api/getFriendsHistory', async (req,res) => {
+    console.log('friends history api called');
+    const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{ 
+			const userExpense = await Expense.findOne({email: email});
+			res.json({status: 'ok', friendsHistory: userExpense.friends, requests: userExpense.requests});
+		}
+	}
     
-  };
+})
 
-  const onSubmit = async (e) => {
-    // e.preventDefault();
-    const url = window.location.href;
-    const searchParam = new URLSearchParams(window.location.search);
-    const gid = searchParam.get('id');
-    const token = localStorage.getItem("token");
-    console.log(gid);
-    console.log(text);
-    console.log(amount);
-    console.log(isCheck);
-    if (!token) {
-      window.location.href = "/";
-    } else {
-      const res = await fetch("http://localhost:1337/api/addExpenseToGroup", {
-        method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': localStorage.getItem('token'),
-            },
-            body: JSON.stringify({
-                groupID: gid,
-                amount: amount,
-                message: text,
-                returners: isCheck,
-            }),
-      });
-      const data = await res.json();
-      if(data.status == 'error'){
-        alert('Please select atleast on returner');
-      }
-      else window.location.href = url;
-    }
-  };
-  
-  const handleSelectAll = (e) => {
-    setIsCheckAll(!isCheckAll);
-    setIsCheck(members?.map((li) => li.email));
-    if(isCheckAll) setIsCheck([]);
-  };
-  
-  const handleClick = (e) => {
-    const { id, checked } = e.target;
-    setIsCheck([...isCheck, id]);
-    if (!checked) {
-      setIsCheck(isCheck.filter((item) => item !== id));
-    }
-  };
-  
-  const Member = members?.map((Member_List) => {
-    return (
-      <>
-        <Checkbox
-          key={Member_List.email}
-          type="checkbox"
-          name={Member_List.name}
-          id={Member_List.email}
-          handleClick={handleClick}
-          isChecked={isCheck.includes(Member_List.email)}
-          className="m-10"
-        />
-        <p> {Member_List.name} </p>
-      </>
-    );
-  });
+app.get('/api/getUsers', async (req,res) => {
+    console.log('get users api called');
+    const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{ 
+			const users = await User.find({},{name:1, email:1});
+			res.json({status: 'ok', users: users});
+		}
+	}
+    
+})
 
-  const randomPosition = () => ({
-    x: Math.random() * 1000,
-    y: Math.random() * 1000,
-  });
-  const search = (data) => {
-    return data.filter((item) =>
-    keys.some((key) => item[key].toLowerCase().includes(query))
-      );
-  };
-  async function settleDues(person2,amount){
-    const searchParam = new URLSearchParams(window.location.search);
-    const gid = searchParam.get('id');
-    // console.log(gid,amount,person2);
-    const res = await fetch('http://localhost:1337/api/addExpenseToGroup', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-access-token': localStorage.getItem('token'),
-        },
-        body: JSON.stringify({
-            groupID: gid,
-            amount: amount,
-            message: "Dues Settled",
-            returners: [person2]
-        }),
-    });
-    window.location.reload();
-  }
-  const fetchUserData = async () => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const groupID = searchParams.get('id');
-    fetch('http://localhost:1337/api/getParticularGroup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-          'x-access-token': localStorage.getItem('token'),
-        },
-      body: JSON.stringify({
-          'id': groupID,
-      }),
-    }).then(res => {
-      return res.json()
-    }).then(data => {
-      setGroup(data.group);
-      setMembers(data.group.members);
-      setExpenses(data.group.expenses.reverse());
-      setSimplifiedTransactions(data.simplifiedTransactions);
-      setOutputGraphData({nodes : data.group.members.map(item => ({ id: item.email, x: 300 + 200*Math.random() , y: 400*Math.random()})), links: data.simplifiedTransactions.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }))});
-      setInputGraphConfig(config);
-    })
-  }
+app.post('/api/deleteRequest', async (req,res) => {    //body = {index, amount, message}
+	const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+    else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{ 
+			const index = req.body.index;
+			const accepted = req.body.accepted;
+			if(!index){
+				res.json({status: 'ok'});
+			}
+			else{
+				const userExpense = await Expense.findOne({email: email});
+				const request = userExpense.requests[userExpense.requests.length-index.index-1];
+				if(!request){
+					res.redirect('http://localhost:3000/friend-finance');
+				}
+				else{
+					console.log(request);
+					const filter = {email: email};
+					const update = {$pull: {requests: request}};
+					await Expense.updateOne(filter,update)
+					.then(console.log('Request deleted successfully'))
+					.catch((err) => {
+						console.log(err);
+						console.log('Request deletion failed')
+					});
+					if(accepted){
+						const filter = {email: request.senderEmail};
+						const update = {$push: {friends: {'amount': request.amount, 'message': request.message, 'friendEmail': email, 'friendName': user.name}}};	//amount > 0 means friend sent us money
+						const filter2 = {email: email};
+						const update2 = {$push: {friends: {'amount': -request.amount, 'message': request.message, 'friendEmail': request.senderEmail, 'friendName': request.senderName}}};	//amount < 0 means we sent money to friend
+						await Expense.updateOne(filter,update)
+						.then(console.log('Friend Transaction Added Successfully!'))
+						.catch((err) => {
+							console.log(err);
+							console.log('Friend Transaction Adding Failed!')
+						});
+						await Expense.updateOne(filter2,update2)
+						.then(console.log('Friend Transaction Added Successfully!'))
+						.catch((err) => {
+							console.log(err);
+							console.log('Friend Transaction Adding Failed!')
+						});
+					}
+					res.redirect('http://localhost:3000/friend-finance');
+				}
+			}
+		}
+	}    
+})
 
-  // const generateNodes = async () => members.map(item => ({ id: item.email }));
-  // const generateOutputLinks = async (items) => items.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }));
-  
-  useEffect(() => {
-    fetchUserData()
-  }, [])
-  
-  return (
-    <GlobalProvider>
-      <Navbar></Navbar>
-      <main className="flex flex-col flex-1 text-center m-5">
-        <div className="flex">
-          <div className="w-1/3 flex flex-col items-center p-7 m-5 mx-auto rounded-2xl shadow-2xl">
-            {/* <Balance/> */}
-            {/* <IncomeExpenses/> */}
-            {/* <Members /> */}
-            <div>
-            <h3
-              className="text-2xl font-bold text-gray-500 m-2"
-              style={{ borderBottom: "thick solid gray" }}
-            >
-              {group.title}
-            </h3>
-            {/* <form>
-              <input
-                className="search w-80 text-center border-2 border-gray-600 bg-gray-100 m-1 p-1 text-black rounded-full"
-                placeholder="Search..."
-                onChange={(e) => setQuery(e.target.value.toLowerCase())}
-              /> */}
-            <div className="h-auto w-96">
-                {members.map((member) => {
-                  return (
-                    <button className="px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-cyan-500 rounded-lg w-30" style={{width:"320px"}} onClick={(e) => {e.preventDefault(); navigator.clipboard.writeText(member.email); alert('Email Copied to Clipboard')}}>
-                      <p>{member.name} ({member.email})</p>
-                    </button>
-                  );
-                })}
-            </div>
-              
-              {/* </form> */}
-            </div>
-            <div>
-            <h3
-              className="text-2xl font-bold text-gray-500 m-2"
-              style={{ textDecoration:"underline", marginTop:"30px" }}
-            >
-              Graph
-            </h3>
-            <h5 className="m-2 text-gray-500">Drag nodes as desired</h5>
-                { 
-                  Object.keys(outputGraphData).length && Object.keys(inputGraphConfig).length ? (
-                    <>
-                      {/* <br/><br/> */}
-                      <Graph
-                        id="graph-id" // id is mandatory
-                        data={outputGraphData}
-                        config={inputGraphConfig}
-                      />
-                      {/* <br/><br/> */}
-                    </>
-                  ) : null
-                }
-            </div>
-          </div>
-          <div className="w-1/3 flex flex-col p-7 m-5 rounded-2xl shadow-2xl">
-            {/* <AddGroupTransaction /> */}
-            <h3
-              className="text-2xl font-bold text-gray-500 m-2"
-              style={{ borderBottom: "thick solid gray" }}
-            >
-              Add Group Transaction
-            </h3>
-            <form onSubmit={onSubmit} className="h-72">
-              <div className="form-control align-center justify-center flex m-2">
-                {/* <label htmlFor="text" className='mr-3'>Text</label> */}
-                <input
-                  className="text-gray-400 bg-gray-100 outline-none flex-1 rounded-xl p-2 pl-5 mb-2"
-                  type="text"
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder="Add new transaction...."
-                />
-              </div>
-              <div className="form-control align-center justify-center flex m-2">
-                {/* <label htmlFor="amount" className='pr-4'>
-                  Amount
-                </label> */}
-                <input
-                  type="number"
-                  className="text-gray-400 bg-gray-100 outline-none flex-1 rounded-xl p-2 pl-4 mb-2 form-control"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="₹ Enter amount..."
-                />
-              </div>
+app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {title, Array of emails}
+	console.log('create group api called');
+	const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+    else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{ 
+			var i;
+			const title = req.body.title;
+			var members = req.body.members;
+			members.push({email: email});
+			var members_with_name = [];
+			for(i=0;i<req.body.members.length;i++){
+				var member = await User.findOne({email: req.body.members[i].email},{name:1});
+				members_with_name.push({email: req.body.members[i].email, name: member.name})
+			}
+			const newGroup = await Group.create({
+				title: title,
+				members: members_with_name,
+			})
+			for(i=0;i<members.length;i++){
+				await Expense.updateOne({email: members[i].email},{$push: {groups: {'groupID': newGroup._id}}})
+			} 
+			res.json({status: 'ok'});
+		}
+	}
+      
+})
 
-              <div className="align-center justify-center overflow-x-scroll w-96">
-                <Checkbox
-                  type="checkbox"
-                  name="selectAll"
-                  id="selectAll"
-                  handleClick={handleSelectAll}
-                  isChecked={isCheckAll}
-                />
-                Select All
-                <div className="flex flex-row ">{Member}</div>
-              </div>
-              <button className="btn">Add Group transaction</button>
-            </form>
-            {/* <SettleUp /> */}
-            <h3
-              className="text-2xl font-bold text-gray-500 m-2 mt-10"
-              style={{ borderBottom: "thick solid gray" }}
-            >
-              Settle Up
-            </h3>
-            <div className="item-center m-2 p-3 overflow-auto max-h-64">
-              <ul className="list flex flex-col justify-center item-center">
-                {simplifiedTransactions.map((transaction) => {
-                  if (transaction.Amount < 0) {
-                    return (
-                      <div className="users flex items-center p-1 w-100 m-1 min-w-0 border-r-4 border-b-4 border-t-2 border-l-2 border-gray-600 rounded-lg">
-                        <p className="justify-start w-60 items-center text-red">
-                          {" "}
-                          You owe {friend.name} ₹ {friend.Amount}{" "}
-                        </p>
-                        <div className="text-right">
-                          <button class="rounded-full w-15 py-0.5 px-3 m-1 text-white  bg-purple-400 ">
-                            {" "}
-                            Settled{" "}
-                          </button>
-                        </div>
-                        {/* <p> {user.Amount}</p>
-                        <p> {user.Description}</p> */}
-                      </div>
-                    );
-                  } else {
-                    return (
-                      <div className="users flex items-center p-1 w-100 m-1 min-w-0 border-r-4 border-b-4 border-t-2 border-l-2 border-gray-600 rounded-lg">
-                        <p className="justify-start w-60 items-center">
-                          {" "}
-                          {transaction.person1 == localStorage.getItem('user') ? "You" : members.find((item) => {return item.email === transaction.person1;}) !== undefined ? members.find((item) => {return item.email === transaction.person1;}).name : null} {transaction.person1 == localStorage.getItem('user') ? "owe" : "owes"} {members.find((item) => {return item.email === transaction.person1;}) !== undefined ? members.find((item) => {return item.email === transaction.person2;}).name : null} ₹ {transaction.amount}{" "}
-                        </p>
-                        <div className="text-right">
-                          {transaction.person1 != localStorage.getItem('user') ? null :
-                          <button class="rounded-full w-15 py-0.5 px-3 m-1 text-white bg-purple-400" onClick={() => settleDues(transaction.person2,transaction.amount)}>
-                            {" "}
-                            Settle{" "}
-                          </button>}
-                        </div>
-                        {/* <p> {user.Amount}</p>
-                        <p> {user.Description}</p> */}
-                      </div>
-                    );
-                  }
-                })}
-              </ul>
-            </div>
-          </div>
-          <div className="w-1/3 flex p-7 m-5 mx-auto justify-center rounded-2xl shadow-2xl">
-            {/* <GroupHistory /> */}
-            <div className="App">
-              <h3
-                className="text-2xl font-bold text-gray-500 m-2"
-                style={{ borderBottom: "thick solid gray" }}
-              >
-                Group History
-              </h3>
-              {/* Iterate over imported array in userData */}
-              <div className="users overflow-auto h-3/4 w-96">
-                {expenses.map((expense, index) => (
-                  <div key={index} className="px-5 py-2 m-3 border-r-4 border-b-4 border-t-2 border-l-2 border-gray-600 rounded-lg">
-                      <p>
-                        {" "}
-                        {expense.payer.name} paid ₹ {expense.Amount} to {" "}
-                      </p>
-                    {expense.returners.map((returner, returner_index) => (
-                      
-                      <span key={`${index}-${returner_index}`}>{returner.name}<br /></span>
-                    ))}
-                      <p>
-                        {" "}
-                        {expense.Message == ""? null : <p>Message: {expense.Message}</p>}
-                      </p>
-                  </div>
-                ))}
+app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {groupID, array of returners, amount, message, }
+	console.log('add expense to group api called');
+    const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		} 
+		else{
+			const groupID = req.body.groupID;
+			const amount = req.body.amount;
+			var returners = [];
+			const message = req.body.message;
+			if(req.body.returners.length > 0){
+				var i;
+				for(i=0;i<req.body.returners.length;i++){
+					const returner = await User.findOne({email: req.body.returners[i]}, {name:1, email:1});
+					returners.push({email: returner.email, name: returner.name})
+				}
+				const filter = {_id: groupID};
+				const update = {$push: {expenses : {'payer': {'email': email, 'name': user.name}, 'returners': returners,'Amount': amount, 'Message': message}}};
+				await Group.updateOne(filter,update);
+				res.json({status: 'ok'});
+			}
+			else res.json({status: 'error', error: 'No returners'});
+		}
+	}
+        
+})
 
-                {/* Display each data in array in a card */}
-                {/* Each card must have a 'key' attribute */}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-3/3 flex flex-col items-center p-7 m-5 mx-auto rounded-2xl shadow-2xl">
-            
-              {/* <br/><br/><br/><br/> */}
-              
-              
-              </div>
-      </main>
-    </GlobalProvider>
-  );
-}
+app.get('/api/getGroups', async (req,res) => {	//headers = {'x-access-token' : token}
+	console.log('get groups api called');
+    const token = req.headers['x-access-token'];
+	if(!token){
+		res.json({status: 'error', error: 'Invalid token'})
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'})
+		}
+		else{
+			const groupIDs = await Expense.findOne({email: email},{groups: 1});
+			var groups = [];
+			var i;
+			for(i=0;i<groupIDs.groups.length;i++){
+				groups.push(await Group.findOne({_id: groupIDs.groups[i].groupID},{title:1}));
+			}
+			res.json({status: 'ok', groups: groups});
+		}        
+	}    
+})
 
-export default App;
+app.post('/api/getParticularGroup', async (req,res) => {
+	console.log('get particular group api called');
+    const token = req.headers['x-access-token'];
+	if(!token){
+		res.json({status: 'error', error: 'Invalid token'})
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'})
+			console.log('laksdjf')
+		}
+		else{ 
+			const id = req.body.id;
+			if(id == null){
+				res.json({status: 'error'});
+			}
+			else{
+				const group = await Group.findOne({_id: id});
+				var transactionsArray = group.expenses;
+				var simplifiedTransactions = await splitwise(transactionsArray);			
+				res.json({status: 'ok', group: group, simplifiedTransactions: simplifiedTransactions});
+			}
+		}        
+	}    
+})
+
+app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : token}, body = {name, start_time, end_time, description, relevant_tags}
+	console.log('add event api called');
+	console.log(req.body);
+	const token = req.headers['x-access-token'];
+    if(!token){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		} 
+		else{
+			const name = req.body.name;
+			const start_time = req.body.start_time;
+			const end_time = req.body.end_time;
+			const description = req.body.description;
+			const relevant_tags = req.body.relevant_tags;
+
+			const newEvent = await Event.create({
+				name: name,
+				start_time: start_time, 
+				end_time: end_time, 
+				description: description, 
+				relevant_tags: relevant_tags
+			})
+			console.log(newEvent);
+			const user = await User.findOne({email: email});
+			if(user.isAdmin == true){
+				await GlobalEvent.create({'eventID': newEvent._id});
+			}
+			else{
+				console.log(email);
+				const filter = {email: email}; 
+				const update = {$push: {personal_events: {'eventID': newEvent._id}}};
+				await Calendar.updateOne(filter,update);
+			}		
+			res.json({status: 'ok'});
+		}
+	}
+     
+})
+
+// app.post('/api/simplify', async (req,res) =>{	//headers = {'x-access-token' : token}, body = {groupID }
+
+// 	console.log('simplify api called');
+//     const token = req.headers['x-access-token'];
+// 	if(!token){
+// 		res.json({status: 'error', error: 'Invalid token'});
+// 	}
+// 	else{
+//         const decoded = jwt.verify(token,'secret123');
+//         const email = decoded.email;
+// 		const user = await User.findOne({email: email});
+// 		if(!user){
+// 			res.json({status: 'error', error: 'Invalid token'});
+// 		} 
+// 		else{
+// 			const groupID = req.body.groupID;
+// 			const filter = {_id: groupID};
+// 			const group = await Group.findOne(filter);
+// 			var transactionsArray = group.expenses;
+// 			var simplifiedTransactions = await splitwise(transactionsArray);
+// 			res.json({status: 'ok', simplifiedTransactions: simplifiedTransactions});
+// 		}
+// 	}
+
+// })
+
+// app.get('/api/getEvents', async (req,res) => {	//headers = {'x-access-token' : token}
+// 	console.log('get events api called');
+//     const token = req.headers['x-access-token'];
+//     if(!token){
+// 		res.json({status: 'error', error: 'Invalid token'});
+// 	}
+// 	else{
+//         const decoded = jwt.verify(token,'secret123');
+//         const email = decoded.email; 
+//         const user = await User.findOne({email: email});
+// 		if(!user){
+// 			res.json({status: 'error', error: 'Invalid token'});
+// 		}
+// 		else{
+// 			var events = [];
+// 			var global_events = await Global.find();
+// 			var i;
+// 			for(i=0;i<global_events.length;i++){
+// 				events.push(await Event.findOne({_id: global_events[i].eventID}));
+// 			}
+// 			if(user.isAdmin == true){
+// 				res.json({status: 'ok', events: events});	//events is array of events		
+// 			}
+// 			else{
+// 				const userCalendar = await Calendar.findOne({email: email});
+// 				for(i=0;i<userCalendar.personal_events.length;i++){
+// 					events.push(await Event.findOne({_id: userCalendar.personal_events[i].eventID}));
+// 				}
+// 				res.json({status: 'ok', events: events});	//events is array of events
+// 			}
+// 		}
+// 	}    
+// })
+
+app.listen(1337, () => {
+	console.log('Server started on 1337')
+})
