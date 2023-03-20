@@ -8,6 +8,7 @@ const MENU_LIST = [
   { text: "Home", href: "/homepage" },
   { text: "Calendar", href: "/calendar" },
   { text: "Expenses", href: "/user-finance" },
+  { text: "Sign-Out", href: "/" },
 ];
 const Navbar = () => {
   const [navActive, setNavActive] = useState(null);
