@@ -129,8 +129,9 @@ function App() {
       );
   };
   async function settleDues(person2,amount){
-    const searchParams = new URLSearchParams(window.location.search);
-    groupID = searchParams.get('id');
+    const searchParam = new URLSearchParams(window.location.search);
+    const gid = searchParam.get('id');
+    // console.log(gid,amount,person2);
     const res = await fetch('http://localhost:1337/api/addExpenseToGroup', {
         method: 'POST',
         headers: {
@@ -138,10 +139,10 @@ function App() {
             'x-access-token': localStorage.getItem('token'),
         },
         body: JSON.stringify({
-            groupID: groupID,
+            groupID: gid,
             amount: amount,
             message: "Dues Settled",
-            returners: [{email: person2}]
+            returners: [person2]
         }),
     });
     window.location.reload();
