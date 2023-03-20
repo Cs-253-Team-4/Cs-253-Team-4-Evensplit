@@ -48,6 +48,20 @@ function App() {
         <form className='flex justify-center mt-3 pt-5'>
             <input className="search w-80 content-center text-center border-2 border-gray-600 bg-gray-100 mb-0 mt-3 p-1 text-black rounded-full" placeholder="Search..." onChange={(e) => setQuery(e.target.value.toLowerCase())} />
         </form>
+        <div className="card-box opacity-100 flex justify-center">
+            <button
+              className="card"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.href = "./group-form";
+              }}
+            >
+              <div className="top">
+                <Name className="text-xs " name="Create New Group" />
+                <Avatar imgURL="https://static.vecteezy.com/system/resources/previews/009/266/327/original/plus-sign-icon-free-png.png" />
+              </div>
+            </button>
+          </div>
         <div className='overflow-auto card-container'>
           {search(groups).map((group) => (
             <div className="card-box">
@@ -59,14 +73,11 @@ function App() {
                   {/* <Avatar imgURL={props.imgURL} /> */}
                   <Avatar imgURL={'https://png.pngtree.com/png-clipart/20190904/original/pngtree-icon-people-group.-icon-people-network.-connection-people-png-image_4459398.jpg'} />
                 </div>
-                <Detail balance="100" email="yo@;lksad" />
+                {/* <Detail balance="100" email="yo@;lksad" /> */}
               </button>
             {/* </a> */}
           </div>
           ))}
-          <button className="btn" style={{width:"50%"}} onClick={(e) => {e.preventDefault(); window.location.href='./group-form'}}>
-          Create New Group
-          </button>
         </div>
       </div>
       {/* //   <Avatar imgsrc="https://media.licdn.com/dms/image/C5603AQEWw0FH_H6RCw/profile-displayphoto-shrink_800_800/0/1517580260726?e=2147483647&v=beta&t=aNMOb_GobO695V_7He-GNXay-K6apDPjEuWWg3sJSIg" /> */}
