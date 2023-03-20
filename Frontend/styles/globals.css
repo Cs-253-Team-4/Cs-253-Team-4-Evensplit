@@ -176,7 +176,7 @@ nav{
 }
 
 .name {
-  font-size: 2em;
+  font-size: 1.25em;
   color: #2d3436;
   /* display: flex; */
   flex: 1;
@@ -184,12 +184,12 @@ nav{
 }
 
 .card .top img {
-  margin: 30px 20px 0 0;
+  margin: 40px 20px 0 0;
   /* position: relative; */
   /* display: flex; */
   /* justify-items: flex-end; */
-  min-width: 5px;
-  flex: 1;
+  /* min-width: 5px; */
+  /* flex: 1; */
 }
 
 .circle-img {
@@ -199,8 +199,8 @@ nav{
   right: 0; */
   border-radius: 50%;
   border: 7px solid #fff;
-  width: 120px;
-  height: 120px;
+  /* width: 120px; */
+  height: 100px;
 }
 
 .card .bottom {
@@ -217,5 +217,3 @@ nav{
 button:hover {
   transform: scale(1.1);
 }
-
-
