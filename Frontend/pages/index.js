@@ -29,6 +29,7 @@ export default function Home() {
 
     if (data.user) {
       localStorage.setItem("token", data.user);
+      localStorage.setItem("user", data.email);
       alert("Login successful");
       window.location.href = "/homepage";
     } else {
