@@ -31,15 +31,23 @@ mongoose.connect(url, {
 app.post('/api/register', async (req, res) => { //body = {name, email, password}
 		const user = await User.findOne({email: req.body.email});
 		if(!user){
-			const newPassword = await bcrypt.hash(req.body.password, 10)
-			await User.create({
-				name: req.body.name,
-				email: req.body.email,
-				password: newPassword,
-				isAdmin: false,
-			}).then(Expense.create({email: req.body.email})).then(Calendar.create({email: req.body.email}));
-			res.json({ status: 'ok' });
-			console.log('User registered successfully!');
+			const str = req.body.email;
+			var domain = str.substring(
+				str.indexOf("@") + 1);
+			if(domain!="iitk.ac.in"){
+				res.json({ status: 'error', error: 'Wrong email' })
+			}
+			else{
+				const newPassword = await bcrypt.hash(req.body.password, 10)
+				await User.create({
+					name: req.body.name,
+					email: req.body.email,
+					password: newPassword,
+					isAdmin: false,
+				}).then(Expense.create({email: req.body.email})).then(Calendar.create({email: req.body.email}));
+				res.json({ status: 'ok' });
+				console.log('User registered successfully!');
+			}
 		}
 		else{
 			console.log('User already registered');
@@ -370,16 +378,18 @@ app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-t
 			const amount = req.body.amount;
 			var returners = [];
 			const message = req.body.message;
-			console.log(groupID,amount,req.body.returners,message);
-			var i;
-			for(i=0;i<req.body.returners.length;i++){
-				const returner = await User.findOne({email: req.body.returners[i]}, {name:1, email:1});
-				returners.push({email: returner.email, name: returner.name})
+			if(req.body.returners.length > 0){
+				var i;
+				for(i=0;i<req.body.returners.length;i++){
+					const returner = await User.findOne({email: req.body.returners[i]}, {name:1, email:1});
+					returners.push({email: returner.email, name: returner.name})
+				}
+				const filter = {_id: groupID};
+				const update = {$push: {expenses : {'payer': {'email': email, 'name': user.name}, 'returners': returners,'Amount': amount, 'Message': message}}};
+				await Group.updateOne(filter,update);
+				res.json({status: 'ok'});
 			}
-			const filter = {_id: groupID};
-			const update = {$push: {expenses : {'payer': {'email': email, 'name': user.name}, 'returners': returners,'Amount': amount, 'Message': message}}};
-			await Group.updateOne(filter,update);
-			res.json({status: 'ok'});
+			else res.json({status: 'error', error: 'No returners'});
 		}
 	}
         
