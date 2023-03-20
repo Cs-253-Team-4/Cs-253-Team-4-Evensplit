@@ -370,9 +370,10 @@ app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-t
 			const amount = req.body.amount;
 			var returners = [];
 			const message = req.body.message;
+			console.log(groupID,amount,req.body.returners,message);
 			var i;
 			for(i=0;i<req.body.returners.length;i++){
-				const returner = await User.findOne({email: req.body.returners[i].email}, {name:1, email:1});
+				const returner = await User.findOne({email: req.body.returners[i]}, {name:1, email:1});
 				returners.push({email: returner.email, name: returner.name})
 			}
 			const filter = {_id: groupID};
@@ -421,6 +422,7 @@ app.post('/api/getParticularGroup', async (req,res) => {
 		const user = await User.findOne({email: email});
 		if(!user){
 			res.json({status: 'error', error: 'Invalid token'})
+			console.log('laksdjf')
 		}
 		else{ 
 			const id = req.body.id;
