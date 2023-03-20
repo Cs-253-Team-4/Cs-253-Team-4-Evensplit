@@ -38,7 +38,12 @@ export default function signup() {
       window.location.href = '/';
     }
     else{
-      alert('User Already Registered');
+      if(data.error == 'Duplicate email'){
+        alert('User Already Registered');
+      }
+      else{
+        alert('Please use your IITK Email');
+      }
     }
   }
   return (
