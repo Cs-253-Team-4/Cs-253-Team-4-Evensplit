@@ -30,21 +30,23 @@ function App() {
   const [amount, setAmount] = useState("₹");
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [isCheck, setIsCheck] = useState([]);
+  const [list, setList] = useState([]);
   const keys = ["name", "email"];
   var groupID;
   const config = {
     freezeAllDragEvents: true,
-    nodeHighlightBehavior: true,
+    // nodeHighlightBehavior: true,
     node: {
-      color: "lightblue",
+      color: "red",
       highlightStrokeColor: "blue",
-      fontSize: 18,
+      fontSize: 16,
     },
     link: {
+      color: "black",
       highlightColor: "lightblue",
       renderLabel: true,
       labelProperty: "amount",
-      fontSize: 18,
+      fontSize: 16,
     },
     directed: true,
     height: 1000,
@@ -53,7 +55,7 @@ function App() {
   };
 
   const onSubmit = async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     const url = window.location.href;
     const searchParam = new URLSearchParams(window.location.search);
     const gid = searchParam.get('id');
@@ -79,16 +81,17 @@ function App() {
             }),
       });
       const data = await res.json();
+      if(data.status == 'error'){
+        alert('Please select atleast on returner');
+      }
+      else window.location.href = url;
     }
-    window.location.href = url;
   };
   
   const handleSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
-    setIsCheck(list?.map((li) => li.email));
-    if (isCheckAll) {
-      setIsCheck([]);
-    }
+    setIsCheck(members?.map((li) => li.email));
+    if(isCheckAll) setIsCheck([]);
   };
   
   const handleClick = (e) => {
@@ -162,7 +165,7 @@ function App() {
       setMembers(data.group.members);
       setExpenses(data.group.expenses.reverse());
       setSimplifiedTransactions(data.simplifiedTransactions);
-      setOutputGraphData({nodes : data.group.members.map(item => ({ id: item.email, x: Math.random(), y: Math.random() })), links: data.simplifiedTransactions.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }))});
+      setOutputGraphData({nodes : data.group.members.map(item => ({ id: item.email, x: 300 + 200*Math.random() , y: 400*Math.random()})), links: data.simplifiedTransactions.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }))});
       setInputGraphConfig(config);
     })
   }
@@ -196,7 +199,7 @@ function App() {
                 placeholder="Search..."
                 onChange={(e) => setQuery(e.target.value.toLowerCase())}
               /> */}
-            <div className="h-96 w-96">
+            <div className="h-auto w-96">
                 {members.map((member) => {
                   return (
                     <button className="px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-cyan-500 rounded-lg w-30" style={{width:"320px"}} onClick={(e) => {e.preventDefault(); navigator.clipboard.writeText(member.email); alert('Email Copied to Clipboard')}}>
@@ -204,9 +207,31 @@ function App() {
                     </button>
                   );
                 })}
-              </div>
+            </div>
               
               {/* </form> */}
+            </div>
+            <div>
+            <h3
+              className="text-2xl font-bold text-gray-500 m-2"
+              style={{ textDecoration:"underline", marginTop:"30px" }}
+            >
+              Graph
+            </h3>
+            <h5 className="m-2 text-gray-500">Drag nodes as desired</h5>
+                { 
+                  Object.keys(outputGraphData).length && Object.keys(inputGraphConfig).length ? (
+                    <>
+                      {/* <br/><br/> */}
+                      <Graph
+                        id="graph-id" // id is mandatory
+                        data={outputGraphData}
+                        config={inputGraphConfig}
+                      />
+                      {/* <br/><br/> */}
+                    </>
+                  ) : null
+                }
             </div>
           </div>
           <div className="w-1/3 flex flex-col p-7 m-5 rounded-2xl shadow-2xl">
@@ -341,25 +366,7 @@ function App() {
         <div className="w-3/3 flex flex-col items-center p-7 m-5 mx-auto rounded-2xl shadow-2xl">
             
               {/* <br/><br/><br/><br/> */}
-              <h3
-                className="text-2xl font-bold text-gray-500 m-2"
-                style={{ borderBottom: "thick solid gray" }}
-              >
-                Graph
-              </h3>
-              { 
-                Object.keys(outputGraphData).length && Object.keys(inputGraphConfig).length ? (
-                  <>
-                    {/* <br/><br/> */}
-                    <Graph
-                      id="graph-id" // id is mandatory
-                      data={outputGraphData}
-                      config={inputGraphConfig}
-                    />
-                    {/* <br/><br/> */}
-                  </>
-                ) : null
-              }
+              
               
               </div>
       </main>
