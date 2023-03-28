@@ -173,7 +173,7 @@ function App() {
                       <div className="px-5 py-2 m-3 border-r-4 border-b-4 border-t-2 border-l-2 border-green-600 rounded-lg ">
                         <p>
                           {" "}
-                          You received ₹{-user.amount} from {user.friendName} ({user.friendEmail})
+                          You received ₹{user.amount} from {user.friendName} ({user.friendEmail})
                           <br/>{user.message == ""? null : <p>Message: {user.message}</p>}
                         </p>
                         {/* <p> ₹ {user.Amount}</p>
