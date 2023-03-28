@@ -126,7 +126,28 @@ export const GroupForm = () => {
           /> */}
           <div className="overflow-auto h-64">
             {search(Users).map((item,index) => (
-              localStorage.getItem('user') == item.email ? null :
+              localStorage.getItem('user') == item.email ? 
+              <button 
+                type="button" // add this attribute
+                key={item.email}
+                className={"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-green-100"}
+                onClick={(e) => {
+                  e.preventDefault();
+                  // if(Selected[index] == 1){
+                  //   setClassName([...ClassName.slice(0,index),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-gray-100",...ClassName.slice(index+1)]);
+                  //   setSelected([...Selected.slice(0,index),0,...Selected.slice(index+1)]);
+                  //   delete_arr(item);
+                  // }
+                  // else{
+                  //   setClassName([...ClassName.slice(0,index),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-green-100",...ClassName.slice(index+1)]);
+                  //   setSelected([...Selected.slice(0,index),1,...Selected.slice(index+1)]);
+                  //   append_arr(item);
+                  // }
+                }}
+              >
+                <p> {item.name}</p>
+                <p> {item.email}</p>
+              </button> :
               <button 
                 type="button" // add this attribute
                 key={item.email}
