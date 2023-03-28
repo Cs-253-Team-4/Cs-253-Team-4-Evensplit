@@ -18,11 +18,6 @@ async function append_arr(item) {
   );
 }
 
-async function delete_arr(item){
-  var index = temp.indexOf(item);
-  temp.splice(index,index);
-}
-
 export const GroupForm = () => {
   const [group, setGroup] = useState("");
   const [member, setMember] = useState("");
@@ -38,6 +33,10 @@ export const GroupForm = () => {
     );
   };
   const createGroup = async (e) => {
+    var i;
+    for(i=0;i<Selected.length;i++){
+      if(Selected[i] == 1) append_arr(Users[i]);
+    }
     e.preventDefault();
     const token = localStorage.getItem('token');
     if(!token){
@@ -136,12 +135,10 @@ export const GroupForm = () => {
                   if(Selected[index] == 1){
                     setClassName([...ClassName.slice(0,index),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-gray-100",...ClassName.slice(index+1)]);
                     setSelected([...Selected.slice(0,index),0,...Selected.slice(index+1)]);
-                    delete_arr(item);
                   }
                   else{
                     setClassName([...ClassName.slice(0,index),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-green-100",...ClassName.slice(index+1)]);
                     setSelected([...Selected.slice(0,index),1,...Selected.slice(index+1)]);
-                    append_arr(item);
                   }
                 }}
               >
