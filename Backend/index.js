@@ -115,7 +115,7 @@ app.post('/api/addExpense', async (req,res) => {    //headers = {'x-access-token
 app.get('/api/getPersonalExpenseHistory', async (req,res) => {  //headers = {'x-access-token' : token}
     console.log('personal history api called');
     const token = req.headers['x-access-token'];
-    if(!token){
+    if(token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
     else{

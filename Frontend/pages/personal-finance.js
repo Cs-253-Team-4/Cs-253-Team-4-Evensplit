@@ -41,18 +41,22 @@ const App = () => {
             }).then(res => {
               return res.json()
             }).then(data => {
+              if(data.status == 'error') window.location.href = "/";
               setUsers(data.personalExpenseHistory.reverse())
               const amounts = data.personalExpenseHistory.map(transaction => Number(transaction.Amount));
               setTotal(amounts.reduce((acc, item) => (acc += item), 0));
               setIncome(amounts.filter(item => item > 0).reduce((acc, item) => (acc += item), 0));
               setExpense(amounts.filter(item => item < 0).reduce((acc, item) => (acc += item), 0)*-1);
             })
-          }
+          }          
+
           useEffect(() => {
+            if(window.localStorage.getItem('token') == null) window.location.href="/"
             fetchUserData()
           }, [])
 
               return (
+                
                 <GlobalProvider>
                   <Navbar></Navbar>
                   <Header />
