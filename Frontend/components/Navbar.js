@@ -17,11 +17,11 @@ const Navbar = () => {
   return (
     <header>
       <nav className={`nav`}>
-        <Link href={"/"}>
-        {/* <img src="https://i.ibb.co/JvG6Lzn/logo-new.png" alt="logo-new" border="0" className="h-10 w-15"/> */}
-        <div className="px-10 ">
-          <h1 className="">EvenSplit</h1>
-        </div>
+        <Link href={"/homepage"}>
+          {/* <img src="https://i.ibb.co/JvG6Lzn/logo-new.png" alt="logo-new" border="0" className="h-10 w-15"/> */}
+          <div className="px-10 ">
+            <h1 className="">EvenSplit</h1>
+          </div>
         </Link>
         <div
           onClick={() => setNavActive(!navActive)}
