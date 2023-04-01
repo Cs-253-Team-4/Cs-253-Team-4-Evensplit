@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from 'react';
+import Navbar from "../components/Navbar";
 // import { Users } from "../components/UserList1";
 
 var temp = [];
@@ -86,13 +87,22 @@ export const GroupForm = () => {
 
   return (
     <>
+      <Navbar></Navbar>
+      <div className="flex justify-center">
       <h3
-        className="text-2xl font-bold text-gray-500 m-2"
-        style={{ borderBottom: "thick solid gray" }}
+        className="text-2xl font-bold text-gray-500 m-2 text-center"
+        style={{ borderBottom: "thick solid gray", textAlign: "center", width: "75%" }}
       >
         Add Group
       </h3>
-      <div className="flex">
+      </div>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
+      }}>
+      <div className="justify-center flex" style={{width: "75%"}}>
       <form onSubmit={createGroup}>
         <div className="form-control align-center justify-center flex m-2">
           {/* <label htmlFor="text" className='mr-3'>Text</label> */}
@@ -168,6 +178,7 @@ export const GroupForm = () => {
           Cancel
         </button>
       </form>
+      </div>
       </div>
 
       {/* {console.log(item)} */}
