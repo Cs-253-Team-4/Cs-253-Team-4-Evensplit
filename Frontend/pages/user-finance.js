@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function user_finance(){
     return(
@@ -27,6 +28,7 @@ export default function user_finance(){
         </Link>
       </div>
     </div>
+    <Footer/>
         </>
     )
 }

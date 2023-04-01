@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from 'react';
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 // import { Users } from "../components/UserList1";
 
 var temp = [];
@@ -183,6 +184,7 @@ export const GroupForm = () => {
       </form>
       </div>
       </div>
+      <Footer/>
 
       {/* {console.log(item)} */}
     </>

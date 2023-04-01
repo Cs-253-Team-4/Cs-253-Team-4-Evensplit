@@ -4,6 +4,7 @@ import { MdLockOutline } from "react-icons/md";
 import Link from "next/link";
 import { useState } from 'react';
 import { useHistory } from "react-router-dom";
+import Footer from "../components/Footer"
 // const inter = Inter({ subsets: ['latin'] })
 
 export default function signup() {
@@ -124,6 +125,7 @@ export default function signup() {
           </div>
         </div>
       </main>
+      <Footer/>
     </>
   );
 }

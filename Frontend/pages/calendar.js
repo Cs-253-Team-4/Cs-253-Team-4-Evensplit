@@ -5,6 +5,8 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { INITIAL_EVENTS, createEventId } from './event-utils'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 
 export default class DemoApp extends React.Component {
@@ -17,6 +19,7 @@ export default class DemoApp extends React.Component {
   render() {
     return (
       <div className='demo-app'>
+        <Navbar/>
         {/* {this.renderSidebar()} */}
         <div className='demo-app-main'>
           <FullCalendar
@@ -42,7 +45,8 @@ export default class DemoApp extends React.Component {
             eventChange={function(){}}
             eventRemove={function(){}}
             */
-          />
+           />
+           <Footer/>
         </div>
       </div>
     )

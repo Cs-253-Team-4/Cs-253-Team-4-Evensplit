@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from 'react';
 import { Header } from "components/Header";
+import Footer from "../components/Footer";
 import { SearchBar } from "components/SearchBar";
 import { IncomeExpenses } from "components/IncomeExpenses";
 import { History } from "components/History";
@@ -196,6 +197,7 @@ function App() {
           </div>
         </div>
       </main>
+      <Footer/>
     </GlobalProvider>
   );
 }

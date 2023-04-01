@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import ContactCard from "../components/groups-component/ContactCard";
 // import groups from "../components/groups-component/groups";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import Avatar from "../components/groups-component/Avatar";
 import Detail from "../components/groups-component/Detail";
 import Name from "../components/groups-component/Name";
@@ -83,7 +84,9 @@ function App() {
         </div>
       </div>
       {/* //   <Avatar imgsrc="https://media.licdn.com/dms/image/C5603AQEWw0FH_H6RCw/profile-displayphoto-shrink_800_800/0/1517580260726?e=2147483647&v=beta&t=aNMOb_GobO695V_7He-GNXay-K6apDPjEuWWg3sJSIg" /> */}
+      <Footer/>
     </div>
+
   );
 }
 

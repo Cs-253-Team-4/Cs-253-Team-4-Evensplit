@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 //import Logo from "./Logo";
 //import NavItem from ".../components/NavItem";
 //import Navbar from "../components/Navbar";
@@ -24,6 +25,7 @@ export default function homepage(){
         </Link>
       </div>
     </div>
+    <Footer />
     </>
   )
 }

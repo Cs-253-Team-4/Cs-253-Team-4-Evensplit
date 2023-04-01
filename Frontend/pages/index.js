@@ -4,6 +4,7 @@ import { FaRegEnvelope } from "react-icons/fa";
 import { MdLockOutline } from "react-icons/md";
 import logo from "/public/logo.png";
 import Link from "next/link";
+import Footer from "../components/Footer"
 import { useState } from 'react';
 // const inter = Inter({ subsets: ['latin'] })
 
@@ -120,6 +121,7 @@ export default function Home() {
           </div>
         </div>
       </main>
+      <Footer/>
     </>
   );
 }

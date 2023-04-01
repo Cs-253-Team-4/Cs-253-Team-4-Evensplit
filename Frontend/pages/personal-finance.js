@@ -6,6 +6,7 @@ import { IncomeExpenses } from "components/IncomeExpenses";
 import { Transaction } from "@/components/Transaction";
 import { AddTransaction } from "components/AddTransaction";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { GlobalContext } from '../context/GlobalState';
 
 import { GlobalProvider } from "context/GlobalState";
@@ -96,6 +97,7 @@ const App = () => {
                       </div>
                     </div>
                   </main>
+                  <Footer/>
                 </GlobalProvider>
               );
             };   

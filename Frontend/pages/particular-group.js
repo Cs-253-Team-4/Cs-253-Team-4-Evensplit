@@ -11,6 +11,7 @@ import { GroupHistory } from "../components/groups-component/GroupHistory";
 import { AddGroupTransaction } from "../components/groups-component/AddGroupTransaction";
 import Checkbox from "../components/groups-component/Checkbox";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 import { GlobalProvider } from "context/GlobalState";
 import { SettleUp } from "../components/groups-component/GroupSettle";
@@ -375,6 +376,7 @@ function App() {
               
               </div>
       </main>
+      <Footer/>
     </GlobalProvider>
   );
 }
