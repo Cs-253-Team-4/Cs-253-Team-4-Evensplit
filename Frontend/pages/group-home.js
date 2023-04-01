@@ -30,11 +30,13 @@ function App() {
     }).then(res => {
       return res.json()
     }).then(data => {
+      if(data.status == 'error') window.location.href="/"
       setGroups(data.groups.reverse())
     })
   }
 
   useEffect(() => {
+    if(window.localStorage.getItem('token') == null || window.localStorage.getItem('user') == null) window.location.href="/"
     fetchUserData()
   }, [])
 

@@ -145,6 +145,8 @@ function App() {
             returners: [person2]
         }),
     });
+    const data = await res.json();
+    if(data.status == 'error') window.location.href="/"
     window.location.reload();
   }
   const fetchUserData = async () => {
@@ -162,6 +164,7 @@ function App() {
     }).then(res => {
       return res.json()
     }).then(data => {
+      if(data.status == 'error') window.location.href="/"
       setGroup(data.group);
       setMembers(data.group.members);
       setExpenses(data.group.expenses.reverse());
@@ -175,6 +178,7 @@ function App() {
   // const generateOutputLinks = async (items) => items.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }));
   
   useEffect(() => {
+    if(window.localStorage.getItem('token') == null || window.localStorage.getItem('user') == null) window.location.href="/"
     fetchUserData()
   }, [])
   

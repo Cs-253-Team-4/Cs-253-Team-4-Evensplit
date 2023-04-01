@@ -51,7 +51,7 @@ const App = () => {
           }          
 
           useEffect(() => {
-            if(window.localStorage.getItem('token') == null) window.location.href="/"
+            if(window.localStorage.getItem('token') == null || window.localStorage.getItem('user') == null) window.location.href="/"
             fetchUserData()
           }, [])
 

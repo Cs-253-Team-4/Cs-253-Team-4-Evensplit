@@ -56,6 +56,7 @@ export const GroupForm = () => {
           }),
       });
       const data = await res.json();
+      if(data.status == 'error') window.location.href="/"
       window.location.href = ('/group-home');
     }
   }
@@ -69,6 +70,7 @@ export const GroupForm = () => {
     }).then(res => {
       return res.json()
     }).then(data => {
+      if(data.status == 'error') window.location.href="/"
       setUsers(data.users)
       var temp_arr = [];
       var temp_arr2 = [];
@@ -82,6 +84,7 @@ export const GroupForm = () => {
     })
   }
   useEffect(() => {
+    if(window.localStorage.getItem('token') == null || window.localStorage.getItem('user') == null) window.location.href="/"
     fetchUserData()
   }, [])
 

@@ -89,7 +89,7 @@ app.post('/api/login', async (req, res) => {    //body = {email, password}
 
 app.post('/api/addExpense', async (req,res) => {    //headers = {'x-access-token' : token}, body = {title, amount}
     const token = req.headers['x-access-token'];
-    if(!token){
+    if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
@@ -115,7 +115,7 @@ app.post('/api/addExpense', async (req,res) => {    //headers = {'x-access-token
 app.get('/api/getPersonalExpenseHistory', async (req,res) => {  //headers = {'x-access-token' : token}
     console.log('personal history api called');
     const token = req.headers['x-access-token'];
-    if(token == 'null'){
+    if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
     else{
@@ -135,7 +135,7 @@ app.get('/api/getPersonalExpenseHistory', async (req,res) => {  //headers = {'x-
 app.post('/api/requestMoney', async (req,res) => {    //body = {friendEmail, amount, message}
 	console.log('request money api called');
 	const token = req.headers['x-access-token'];
-    if(!token){
+    if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
     else{
@@ -168,7 +168,7 @@ app.post('/api/requestMoney', async (req,res) => {    //body = {friendEmail, amo
 
 app.post('/api/addFriendTransaction', async (req,res) => {    //body = {friendEmail, amount, message}
 	const token = req.headers['x-access-token'];
-    if(!token){
+    if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
     else{
@@ -226,7 +226,7 @@ app.post('/api/addFriendTransaction', async (req,res) => {    //body = {friendEm
 app.get('/api/getFriendsHistory', async (req,res) => {
     console.log('friends history api called');
     const token = req.headers['x-access-token'];
-    if(!token){
+    if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
@@ -247,7 +247,7 @@ app.get('/api/getFriendsHistory', async (req,res) => {
 app.get('/api/getUsers', async (req,res) => {
     console.log('get users api called');
     const token = req.headers['x-access-token'];
-    if(!token){
+    if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
@@ -267,7 +267,7 @@ app.get('/api/getUsers', async (req,res) => {
 
 app.post('/api/deleteRequest', async (req,res) => {    //body = {index, amount, message}
 	const token = req.headers['x-access-token'];
-    if(!token){
+    if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
     else{
@@ -327,7 +327,7 @@ app.post('/api/deleteRequest', async (req,res) => {    //body = {index, amount, 
 app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {title, Array of emails}
 	console.log('create group api called');
 	const token = req.headers['x-access-token'];
-    if(!token){
+    if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
     else{
@@ -363,7 +363,7 @@ app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' 
 app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {groupID, array of returners, amount, message, }
 	console.log('add expense to group api called');
     const token = req.headers['x-access-token'];
-    if(!token){
+    if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
@@ -398,7 +398,7 @@ app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-t
 app.get('/api/getGroups', async (req,res) => {	//headers = {'x-access-token' : token}
 	console.log('get groups api called');
     const token = req.headers['x-access-token'];
-	if(!token){
+	if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'})
 	}
 	else{
@@ -423,7 +423,7 @@ app.get('/api/getGroups', async (req,res) => {	//headers = {'x-access-token' : t
 app.post('/api/getParticularGroup', async (req,res) => {
 	console.log('get particular group api called');
     const token = req.headers['x-access-token'];
-	if(!token){
+	if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'})
 	}
 	else{
@@ -453,7 +453,7 @@ app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : t
 	console.log('add event api called');
 	console.log(req.body);
 	const token = req.headers['x-access-token'];
-    if(!token){
+    if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
@@ -498,7 +498,7 @@ app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : t
 
 // 	console.log('simplify api called');
 //     const token = req.headers['x-access-token'];
-// 	if(!token){
+// 	if(!token || token == 'null'){
 // 		res.json({status: 'error', error: 'Invalid token'});
 // 	}
 // 	else{
@@ -523,7 +523,7 @@ app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : t
 // app.get('/api/getEvents', async (req,res) => {	//headers = {'x-access-token' : token}
 // 	console.log('get events api called');
 //     const token = req.headers['x-access-token'];
-//     if(!token){
+//     if(!token || token == 'null'){
 // 		res.json({status: 'error', error: 'Invalid token'});
 // 	}
 // 	else{

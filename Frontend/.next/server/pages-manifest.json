@@ -2,5 +2,8 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/group-form": "pages/group-form.js"
+  "/homepage": "pages/homepage.js",
+  "/user-finance": "pages/user-finance.js",
+  "/": "pages/index.js",
+  "/friend-finance": "pages/friend-finance.js"
 }
