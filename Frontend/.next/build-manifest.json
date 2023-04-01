@@ -30,10 +30,20 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
+    "/group-form": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/group-form.js"
+    ],
     "/group-home": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/group-home.js"
+    ],
+    "/particular-group": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/particular-group.js"
     ]
   },
   "ampFirstPages": []

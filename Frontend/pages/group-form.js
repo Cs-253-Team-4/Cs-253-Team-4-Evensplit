@@ -129,16 +129,16 @@ export const GroupForm = () => {
               <button 
                 type="button" // add this attribute
                 key={item.email}
-                className={ClassName[index]}
+                className={ClassName[Users.indexOf(item)]}
                 onClick={(e) => {
                   e.preventDefault();
-                  if(Selected[index] == 1){
-                    setClassName([...ClassName.slice(0,index),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-gray-100",...ClassName.slice(index+1)]);
-                    setSelected([...Selected.slice(0,index),0,...Selected.slice(index+1)]);
+                  if(Selected[Users.indexOf(item)] == 1){
+                    setClassName([...ClassName.slice(0,Users.indexOf(item)),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-gray-100",...ClassName.slice(Users.indexOf(item)+1)]);
+                    setSelected([...Selected.slice(0,Users.indexOf(item)),0,...Selected.slice(Users.indexOf(item)+1)]);
                   }
                   else{
-                    setClassName([...ClassName.slice(0,index),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-green-100",...ClassName.slice(index+1)]);
-                    setSelected([...Selected.slice(0,index),1,...Selected.slice(index+1)]);
+                    setClassName([...ClassName.slice(0,Users.indexOf(item)),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-green-100",...ClassName.slice(Users.indexOf(item)+1)]);
+                    setSelected([...Selected.slice(0,Users.indexOf(item)),1,...Selected.slice(Users.indexOf(item)+1)]);
                   }
                 }}
               >
