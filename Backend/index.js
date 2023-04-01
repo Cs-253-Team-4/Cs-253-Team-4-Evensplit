@@ -8,6 +8,7 @@ const Group = require('./models/group.model')
 const Calendar = require('./models/calendar.model')
 const Event = require('./models/event.model')
 const Global = require('./models/globalEvents.model')
+const { ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
@@ -451,7 +452,6 @@ app.post('/api/getParticularGroup', async (req,res) => {
 
 app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : token}, body = {name, start_time, end_time, description, relevant_tags}
 	console.log('add event api called');
-	console.log(req.body);
 	const token = req.headers['x-access-token'];
     if(!token || token == 'null'){
 		res.json({status: 'error', error: 'Invalid token'});
@@ -477,10 +477,9 @@ app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : t
 				description: description, 
 				relevant_tags: relevant_tags
 			})
-			console.log(newEvent);
 			const user = await User.findOne({email: email});
 			if(user.isAdmin == true){
-				await GlobalEvent.create({'eventID': newEvent._id});
+				await Global.create({'eventID': newEvent._id});
 			}
 			else{
 				console.log(email);
@@ -494,65 +493,82 @@ app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : t
      
 })
 
-// app.post('/api/simplify', async (req,res) =>{	//headers = {'x-access-token' : token}, body = {groupID }
+app.post('/api/deleteEvent', async (req,res) => {	//headers = {'x-access-token' : token}, body = {eventId}
+	console.log('delete event api called');
+	const token = req.headers['x-access-token'];
+    if(!token || token == 'null'){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		} 
+		else{
+			const eventId = req.body.eventId;
+			console.log('new ObjectId("'+eventId+'")');
+			const user = await User.findOne({email: email});
+			const userCalendar = await Calendar.findOne({email: email});
+			console.log(userCalendar);
+			var eventIDToCheck = new ObjectId(eventId.toString());
+			if(userCalendar.personal_events.findIndex(event => event.eventID.equals(eventIDToCheck)) != -1){
+				const filter = {email: email}; 
+				const update = {$pull: {personal_events: {eventID: eventIDToCheck}}};
+				await Calendar.updateOne(filter,update);
+				await Event.deleteOne({_id: eventId});
+				console.log('event deleted successfully')
+				res.json({status: 'ok'});
+			}
+			else if(user.isAdmin == true){ 
+				await Global.deleteOne({eventID: eventId});
+				await Event.deleteOne({_id: eventId});
+				console.log('event deleted successfully')
+				res.json({status: 'ok'});
+			}
+			else{
+				console.log('event deletion failed')
+				res.json({status: 'error', error: 'unauthorized access'})
+			}		
+		}
+	}
+     
+})
 
-// 	console.log('simplify api called');
-//     const token = req.headers['x-access-token'];
-// 	if(!token || token == 'null'){
-// 		res.json({status: 'error', error: 'Invalid token'});
-// 	}
-// 	else{
-//         const decoded = jwt.verify(token,'secret123');
-//         const email = decoded.email;
-// 		const user = await User.findOne({email: email});
-// 		if(!user){
-// 			res.json({status: 'error', error: 'Invalid token'});
-// 		} 
-// 		else{
-// 			const groupID = req.body.groupID;
-// 			const filter = {_id: groupID};
-// 			const group = await Group.findOne(filter);
-// 			var transactionsArray = group.expenses;
-// 			var simplifiedTransactions = await splitwise(transactionsArray);
-// 			res.json({status: 'ok', simplifiedTransactions: simplifiedTransactions});
-// 		}
-// 	}
-
-// })
-
-// app.get('/api/getEvents', async (req,res) => {	//headers = {'x-access-token' : token}
-// 	console.log('get events api called');
-//     const token = req.headers['x-access-token'];
-//     if(!token || token == 'null'){
-// 		res.json({status: 'error', error: 'Invalid token'});
-// 	}
-// 	else{
-//         const decoded = jwt.verify(token,'secret123');
-//         const email = decoded.email; 
-//         const user = await User.findOne({email: email});
-// 		if(!user){
-// 			res.json({status: 'error', error: 'Invalid token'});
-// 		}
-// 		else{
-// 			var events = [];
-// 			var global_events = await Global.find();
-// 			var i;
-// 			for(i=0;i<global_events.length;i++){
-// 				events.push(await Event.findOne({_id: global_events[i].eventID}));
-// 			}
-// 			if(user.isAdmin == true){
-// 				res.json({status: 'ok', events: events});	//events is array of events		
-// 			}
-// 			else{
-// 				const userCalendar = await Calendar.findOne({email: email});
-// 				for(i=0;i<userCalendar.personal_events.length;i++){
-// 					events.push(await Event.findOne({_id: userCalendar.personal_events[i].eventID}));
-// 				}
-// 				res.json({status: 'ok', events: events});	//events is array of events
-// 			}
-// 		}
-// 	}    
-// })
+app.get('/api/getEvents', async (req,res) => {	//headers = {'x-access-token' : token}
+	console.log('get events api called');
+    const token = req.headers['x-access-token'];
+    if(!token || token == 'null'){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
+        const decoded = jwt.verify(token,'secret123');
+        const email = decoded.email; 
+        const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{
+			var events = [];
+			var global_events = await Global.find();
+			var i;
+			for(i=0;i<global_events.length;i++){
+				events.push(await Event.findOne({_id: global_events[i].eventID}));
+			}
+			if(user.isAdmin == true){
+				res.json({status: 'ok', events: events});	//events is array of events		
+			}
+			else{
+				const userCalendar = await Calendar.findOne({email: email});
+				for(i=0;i<userCalendar.personal_events.length;i++){
+					events.push(await Event.findOne({_id: userCalendar.personal_events[i].eventID}));
+				}
+				res.json({status: 'ok', events: events});	//events is array of events
+			}
+		}
+	}    
+})
 
 app.listen(1337, () => {
 	console.log('Server started on 1337')
