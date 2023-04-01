@@ -14,8 +14,8 @@ function App() {
   const [weekendsVisible, setWeekendsVisible] = useState(true);
   const [currentEvents, setCurrentEvents] = useState([]);
 
-  const fetchEventData = () => {
-    fetch('http://localhost:1337/api/getEvents', {
+  const fetchEventData = async () => {
+    await fetch('http://localhost:1337/api/getEvents', {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json',
@@ -27,8 +27,18 @@ function App() {
       var i;
       var events = [];
       for(i=0;i<data.events.length;i++){
-        events.push({id: data.events[i]._id, title: data.events[i].name, start: data.events[i].start_time.replace(/T.*$/, ''), end: data.events[i].end_time.replace(/T.*$/, '')});
+        var start_date = new Date(data.events[i].start_time)
+        var end_date = new Date(data.events[i].end_time)
+        if(start_date.getHours() === 0 && start_date.getMinutes() === 0 && start_date.getSeconds() === 0 && end_date.getHours() === 0 && end_date.getMinutes() === 0 && end_date.getSeconds() === 0){
+          start_date.setDate(start_date.getDate() + 1);
+          end_date.setDate(end_date.getDate() + 1);
+          events.push({id: data.events[i]._id, title: data.events[i].name, start: start_date.toISOString().replace(/T.*$/, ''), end: end_date.toISOString().replace(/T.*$/, '')});
+        }
+        else{
+          events.push({id: data.events[i]._id, title: data.events[i].name, start: data.events[i].start_time, end: data.events[i].end_time});
+        }
       }
+      console.log(events)
       setCurrentEvents(events);
 
     })
@@ -113,10 +123,10 @@ function App() {
             // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
             // you can update a remote database when these fire:
             eventAdd={async (e) => {
+              console.log(e.event.start);
+              console.log(e.event.end);
               var start_time = e.event.start;
               var end_time = e.event.end;
-              start_time.setDate(start_time.getDate()+1);
-              end_time.setDate(end_time.getDate()+1);
               await fetch('http://localhost:1337/api/addEvent', {
                 method: 'POST',
                 headers: {
@@ -136,7 +146,44 @@ function App() {
                 if(data.status == 'error') window.location.href = "/";
               })
             }}
-            //eventChange={function(){}}
+            eventChange={async (e) => {
+              console.log(e.event.start);
+              console.log(e.event.end);
+              var start_time = e.event.start;
+              var end_time = e.event.end;
+              await fetch('http://localhost:1337/api/addEvent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': localStorage.getItem('token'),
+                  },
+                body: JSON.stringify({
+                  name: e.event.title,
+                  start_time: start_time,
+                  end_time: end_time,
+                  description: "Description goes here",
+                  relevant_tags: "Relevant Tags go here",
+              }),
+              }).then(res => {
+                return res.json()
+              }).then(data => {
+                if(data.status == 'error') window.location.href = "/";
+              }).then(fetch('http://localhost:1337/api/deleteEvent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': localStorage.getItem('token'),
+                  },
+                body: JSON.stringify({
+                  eventId: e.oldEvent.id,
+              }),
+              }).then(res => {
+                return res.json()
+              }).then(data => {
+                if(data.status == 'error' && data.error != 'unauthorized access') window.location.href = "/";
+                window.location.reload();
+              }))
+            }}
             eventRemove={async (e) => {
               await fetch('http://localhost:1337/api/deleteEvent', {
                 method: 'POST',
