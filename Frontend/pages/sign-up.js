@@ -16,34 +16,38 @@ export default function signup() {
 
   async function registerUser(event) {
     event.preventDefault();
-
-    const response = await fetch("http://localhost:1337/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-      }),
-    });
-
-    const data = await response.json();
-
-    // if (data.status === "ok") {
-    //   history.push("/");
-    // }
-    if(data.status == 'ok'){
-      alert('User Registered Successfully');
-      window.location.href = '/';
+    if(password.length < 8){
+      window.alert('Password must contain atleast 8 characters');
     }
     else{
-      if(data.error == 'Duplicate email'){
-        alert('User Already Registered');
+      const response = await fetch("http://localhost:1337/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      // if (data.status === "ok") {
+      //   history.push("/");
+      // }
+      if(data.status == 'ok'){
+        alert('User Registered Successfully');
+        window.location.href = '/';
       }
       else{
-        alert('Please use your IITK Email');
+        if(data.error == 'Duplicate email'){
+          alert('User Already Registered');
+        }
+        else{
+          alert('Please use your IITK Email');
+        }
       }
     }
   }
