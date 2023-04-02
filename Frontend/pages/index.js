@@ -49,7 +49,7 @@ export default function Home() {
               border="0"
               className="h-20 w-25"
             />
-            <div className="py-6">
+            <div className="py-12">
               <div className="text-3xl font-bold text-blue-500 mb-2">
                 Log into your Account
               </div>
