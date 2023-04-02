@@ -166,7 +166,7 @@ function App() {
               }).then(res => {
                 return res.json()
               }).then(data => {
-                if(data.status == 'error') window.location.href = "/";
+                window.location.reload();
               })
             }}
             eventChange={async (e) => {
@@ -221,7 +221,7 @@ function App() {
                 return res.json()
               }).then(data => {
                 if(data.status == 'error' && data.error != 'unauthorized access') window.location.href = "/";
-                if(data.status == 'error') window.location.reload();
+                window.location.reload();
               })
             }}
            />
