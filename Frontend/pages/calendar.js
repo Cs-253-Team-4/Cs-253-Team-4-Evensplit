@@ -4,7 +4,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { INITIAL_EVENTS, createEventId } from './event-utils'
+import { createEventId } from './event-utils'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
@@ -96,7 +96,7 @@ function App() {
   const renderSidebarEvent = (event) => {
     return (
       <li key={event.id}>
-        <b>{formatDate(event.start, {year: 'numeric', month: 'short', day: 'numeric'})}</b>
+        <b>{formatDate(event.start, {year: 'numeric', month: 'short', day: 'numeric'})} </b>
         <i>{event.title}</i>
       </li>
     )
@@ -106,7 +106,26 @@ function App() {
       <div className='demo-app'>
         <Navbar/>
         {/* {this.renderSidebar()} */}
-        <div className='demo-app-main'>
+        <div className='demo-app' style={{display: "flex", padding: "15px"}}>
+        <div className='demo-app-sidebar' style={{width: "20%"}}>
+            <div className='demo-app-sidebar-section'>
+              <label>
+                <input
+                  type='checkbox'
+                  checked={weekendsVisible}
+                  onChange={handleWeekendsToggle}
+                ></input>
+                Toggle Weekends
+              </label>
+            </div>
+            <div className='demo-app-sidebar-section'>
+              <h2>All Events ({currentEvents.length})</h2>
+              <ul>
+                {currentEvents.map(renderSidebarEvent)}
+              </ul>
+            </div>
+          </div>
+        <div className='demo-app-main' style={{width: "80%"}}>
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             headerToolbar={{
@@ -125,7 +144,6 @@ function App() {
             eventContent={renderEventContent} // custom render function
             eventClick={handleEventClick}
             // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
-            // you can update a remote database when these fire:
             eventAdd={async (e) => {
               console.log(e.event._def.extendedProps.description)
               console.log(e.event.start);
@@ -166,7 +184,7 @@ function App() {
                   name: e.event.title,
                   start_time: start_time,
                   end_time: end_time,
-                  description: "Description goes here",
+                  description: e.event._def.extendedProps.description,
                   relevant_tags: "Relevant Tags go here",
               }),
               }).then(res => {
@@ -186,7 +204,7 @@ function App() {
                 return res.json()
               }).then(data => {
                 if(data.status == 'error' && data.error != 'unauthorized access') window.location.href = "/";
-                if(data.status == 'error') window.location.reload();
+                window.location.reload();
               }))
             }}
             eventRemove={async (e) => {
@@ -207,8 +225,9 @@ function App() {
               })
             }}
            />
-           <Footer/>
         </div>
+      </div>
+        <Footer/>
       </div>
 
     )
