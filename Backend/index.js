@@ -29,6 +29,15 @@ mongoose.connect(url, {
     console.log(err);
 });
 
+function isValid(token){
+	try{
+		const decoded = jwt.verify(token, 'secret123');
+		return {'valid': true, 'decoded': decoded}
+	}catch(err){
+		return {'valid': false}
+	}
+}
+
 app.post('/api/register', async (req, res) => { //body = {name, email, password}
 		const user = await User.findOne({email: req.body.email});
 		if(!user){
@@ -90,11 +99,12 @@ app.post('/api/login', async (req, res) => {    //body = {email, password}
 
 app.post('/api/addExpense', async (req,res) => {    //headers = {'x-access-token' : token}, body = {title, amount}
     const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+	const userAuth = isValid(token);
+    if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
-        const decoded = jwt.verify(token,'secret123');
+		const decoded = userAuth.decoded;
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		if(!user){
@@ -116,11 +126,12 @@ app.post('/api/addExpense', async (req,res) => {    //headers = {'x-access-token
 app.get('/api/getPersonalExpenseHistory', async (req,res) => {  //headers = {'x-access-token' : token}
     console.log('personal history api called');
     const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+    const userAuth = isValid(token);
+	if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
-    else{
-        const decoded = jwt.verify(token,'secret123');
+	else{
+		const decoded = userAuth.decoded;
         const email = decoded.email; 
 		const user = await User.findOne({email:email});
 		if(!user){
@@ -136,11 +147,12 @@ app.get('/api/getPersonalExpenseHistory', async (req,res) => {  //headers = {'x-
 app.post('/api/requestMoney', async (req,res) => {    //body = {friendEmail, amount, message}
 	console.log('request money api called');
 	const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+    const userAuth = isValid(token);
+	if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
-    else{
-        const decoded = jwt.verify(token,'secret123');
+	else{
+		const decoded = userAuth.decoded;
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		const friend = await User.findOne({email: req.body.friendEmail});
@@ -169,11 +181,12 @@ app.post('/api/requestMoney', async (req,res) => {    //body = {friendEmail, amo
 
 app.post('/api/addFriendTransaction', async (req,res) => {    //body = {friendEmail, amount, message}
 	const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+    const userAuth = isValid(token);
+	if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
-    else{
-        const decoded = jwt.verify(token,'secret123');
+	else{
+		const decoded = userAuth.decoded;
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		const friend = await User.findOne({email: req.body.friendEmail});
@@ -227,11 +240,12 @@ app.post('/api/addFriendTransaction', async (req,res) => {    //body = {friendEm
 app.get('/api/getFriendsHistory', async (req,res) => {
     console.log('friends history api called');
     const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+    const userAuth = isValid(token);
+	if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
-        const decoded = jwt.verify(token,'secret123');
+		const decoded = userAuth.decoded;
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		if(!user){
@@ -248,12 +262,13 @@ app.get('/api/getFriendsHistory', async (req,res) => {
 app.get('/api/getUsers', async (req,res) => {
     console.log('get users api called');
     const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+	const userAuth = isValid(token);
+	if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
-        const decoded = jwt.verify(token,'secret123');
-        const email = decoded.email;
+		const decoded = userAuth.decoded;
+		const email = decoded.email;
 		const user = await User.findOne({email: email});
 		if(!user){
 			res.json({status: 'error', error: 'Invalid token'});
@@ -268,11 +283,12 @@ app.get('/api/getUsers', async (req,res) => {
 
 app.post('/api/deleteRequest', async (req,res) => {    //body = {index, amount, message}
 	const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+    const userAuth = isValid(token);
+	if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
-    else{
-        const decoded = jwt.verify(token,'secret123');
+	else{
+		const decoded = userAuth.decoded;
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		if(!user){
@@ -328,11 +344,12 @@ app.post('/api/deleteRequest', async (req,res) => {    //body = {index, amount, 
 app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {title, Array of emails}
 	console.log('create group api called');
 	const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+    const userAuth = isValid(token);
+	if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
-    else{
-        const decoded = jwt.verify(token,'secret123');
+	else{
+		const decoded = userAuth.decoded;
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		if(!user){
@@ -364,11 +381,12 @@ app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' 
 app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {groupID, array of returners, amount, message, }
 	console.log('add expense to group api called');
     const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+    const userAuth = isValid(token);
+	if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
-        const decoded = jwt.verify(token,'secret123');
+		const decoded = userAuth.decoded;
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		if(!user){
@@ -399,11 +417,12 @@ app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-t
 app.get('/api/getGroups', async (req,res) => {	//headers = {'x-access-token' : token}
 	console.log('get groups api called');
     const token = req.headers['x-access-token'];
-	if(!token || token == 'null'){
-		res.json({status: 'error', error: 'Invalid token'})
+	const userAuth = isValid(token);
+	if(userAuth.valid == false){
+		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
-        const decoded = jwt.verify(token,'secret123');
+		const decoded = userAuth.decoded;
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		if(!user){
@@ -424,11 +443,12 @@ app.get('/api/getGroups', async (req,res) => {	//headers = {'x-access-token' : t
 app.post('/api/getParticularGroup', async (req,res) => {
 	console.log('get particular group api called');
     const token = req.headers['x-access-token'];
-	if(!token || token == 'null'){
-		res.json({status: 'error', error: 'Invalid token'})
+	const userAuth = isValid(token);
+	if(userAuth.valid == false){
+		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
-        const decoded = jwt.verify(token,'secret123');
+		const decoded = userAuth.decoded;
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		if(!user){
@@ -453,11 +473,12 @@ app.post('/api/getParticularGroup', async (req,res) => {
 app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : token}, body = {name, start_time, end_time, description, relevant_tags}
 	console.log('add event api called');
 	const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+    const userAuth = isValid(token);
+	if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
-        const decoded = jwt.verify(token,'secret123');
+		const decoded = userAuth.decoded;
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		if(!user){
@@ -496,11 +517,12 @@ app.post('/api/addEvent', async (req,res) => {	//headers = {'x-access-token' : t
 app.post('/api/deleteEvent', async (req,res) => {	//headers = {'x-access-token' : token}, body = {eventId}
 	console.log('delete event api called');
 	const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+    const userAuth = isValid(token);
+	if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
-        const decoded = jwt.verify(token,'secret123');
+		const decoded = userAuth.decoded;
         const email = decoded.email;
 		const user = await User.findOne({email: email});
 		if(!user){
@@ -539,11 +561,12 @@ app.post('/api/deleteEvent', async (req,res) => {	//headers = {'x-access-token' 
 app.get('/api/getEvents', async (req,res) => {	//headers = {'x-access-token' : token}
 	console.log('get events api called');
     const token = req.headers['x-access-token'];
-    if(!token || token == 'null'){
+    const userAuth = isValid(token);
+	if(userAuth.valid == false){
 		res.json({status: 'error', error: 'Invalid token'});
 	}
 	else{
-        const decoded = jwt.verify(token,'secret123');
+		const decoded = userAuth.decoded;
         const email = decoded.email; 
         const user = await User.findOne({email: email});
 		if(!user){
