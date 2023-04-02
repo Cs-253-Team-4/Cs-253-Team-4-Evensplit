@@ -32,15 +32,14 @@ function App() {
         if(start_date.getHours() === 0 && start_date.getMinutes() === 0 && start_date.getSeconds() === 0 && end_date.getHours() === 0 && end_date.getMinutes() === 0 && end_date.getSeconds() === 0){
           start_date.setDate(start_date.getDate() + 1);
           end_date.setDate(end_date.getDate() + 1);
-          events.push({id: data.events[i]._id, title: data.events[i].name, start: start_date.toISOString().replace(/T.*$/, ''), end: end_date.toISOString().replace(/T.*$/, '')});
+          events.push({id: data.events[i]._id, title: data.events[i].name, start: start_date.toISOString().replace(/T.*$/, ''), end: end_date.toISOString().replace(/T.*$/, ''), description: data.events[i].description});
         }
         else{
-          events.push({id: data.events[i]._id, title: data.events[i].name, start: data.events[i].start_time, end: data.events[i].end_time});
+          events.push({id: data.events[i]._id, title: data.events[i].name, start: data.events[i].start_time, end: data.events[i].end_time, description: data.events[i].description});
         }
       }
       console.log(events)
       setCurrentEvents(events);
-
     })
   }
 
@@ -55,6 +54,8 @@ function App() {
 
   const handleDateSelect = (selectInfo) => {
     let title = prompt('Please enter a new title for your event')
+    var description;
+    if(title) description = prompt('Please enter a description for your event')
     let calendarApi = selectInfo.view.calendar
 
     calendarApi.unselect() // clear date selection
@@ -63,6 +64,7 @@ function App() {
       calendarApi.addEvent({
         id: createEventId(),
         title,
+        description,
         start: selectInfo.startStr,
         end: selectInfo.endStr,
         allDay: selectInfo.allDay
@@ -82,9 +84,11 @@ function App() {
 
   const renderEventContent = (eventInfo) => {
     return (
-      <>
-        <b>{eventInfo.timeText}</b>
-        <i>{eventInfo.event.title}</i>
+      <>        
+        <code title={eventInfo.event._def.extendedProps.description}>
+          <b>{eventInfo.timeText} </b>
+          <i>{eventInfo.event.title}</i>
+        </code>
       </>
     )
   }
@@ -123,6 +127,7 @@ function App() {
             // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
             // you can update a remote database when these fire:
             eventAdd={async (e) => {
+              console.log(e.event._def.extendedProps.description)
               console.log(e.event.start);
               console.log(e.event.end);
               var start_time = e.event.start;
@@ -137,7 +142,7 @@ function App() {
                   name: e.event.title,
                   start_time: start_time,
                   end_time: end_time,
-                  description: "Description goes here",
+                  description: e.event._def.extendedProps.description,
                   relevant_tags: "Relevant Tags go here",
               }),
               }).then(res => {
