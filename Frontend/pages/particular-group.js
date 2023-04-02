@@ -57,14 +57,14 @@ function App() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    if(amount == 0){
+      window.alert('Transaction amount cannot be 0');
+    }
+    else{
     const url = window.location.href;
     const searchParam = new URLSearchParams(window.location.search);
     const gid = searchParam.get('id');
     const token = localStorage.getItem("token");
-    console.log(gid);
-    console.log(text);
-    console.log(amount);
-    console.log(isCheck);
     if (!token) {
       window.location.href = "/";
     } else {
@@ -87,6 +87,7 @@ function App() {
       }
       else window.location.href = url;
     }
+  }
   };
   
   const handleSelectAll = (e) => {
@@ -269,6 +270,7 @@ function App() {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="₹ Enter amount..."
+                  required
                 />
               </div>
 

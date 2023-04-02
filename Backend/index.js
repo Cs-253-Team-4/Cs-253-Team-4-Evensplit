@@ -295,19 +295,25 @@ app.post('/api/deleteRequest', async (req,res) => {    //body = {index, amount, 
 			res.json({status: 'error', error: 'Invalid token'});
 		}
 		else{ 
+			console.log(req.body);
 			const index = req.body.index;
 			const accepted = req.body.accepted;
-			if(!index){
-				res.json({status: 'ok'});
+			if(index == null){
+				res.json({status: 'error'});
 			}
 			else{
 				const userExpense = await Expense.findOne({email: email});
 				const request = userExpense.requests[userExpense.requests.length-index.index-1];
 				if(!request){
+					res.json({status: 'error', error: 'invalid request'});
 					res.redirect('http://localhost:3000/friend-finance');
 				}
 				else{
-					console.log(request);
+					const friend = await User.findOne({email: request.senderEmail});
+					if(!friend){
+						res.json({status: 'error', error: 'Invalid token'});
+					}
+					else{
 					const filter = {email: email};
 					const update = {$pull: {requests: request}};
 					await Expense.updateOne(filter,update)
@@ -321,6 +327,11 @@ app.post('/api/deleteRequest', async (req,res) => {    //body = {index, amount, 
 						const update = {$push: {friends: {'amount': request.amount, 'message': request.message, 'friendEmail': email, 'friendName': user.name}}};	//amount > 0 means friend sent us money
 						const filter2 = {email: email};
 						const update2 = {$push: {friends: {'amount': -request.amount, 'message': request.message, 'friendEmail': request.senderEmail, 'friendName': request.senderName}}};	//amount < 0 means we sent money to friend
+						const filter3 = {email: email};
+						const update3 = {$push: {personal: {'Amount': -request.amount, 'Title': `You paid ${friend.name} (${friend.email})`, 'Time' : new Date()}}};	//amount < 0 means we sent money to friend
+						const filter4 = {email: friend.email};
+						const update4 = {$push: {personal: {'Amount': request.amount, 'Title': `You received from ${user.name} (${email})`, 'Time' : new Date()}}};	//amount < 0 means we sent money to friend
+			
 						await Expense.updateOne(filter,update)
 						.then(console.log('Friend Transaction Added Successfully!'))
 						.catch((err) => {
@@ -333,8 +344,24 @@ app.post('/api/deleteRequest', async (req,res) => {    //body = {index, amount, 
 							console.log(err);
 							console.log('Friend Transaction Adding Failed!')
 						});
+						res.json({status: 'ok'});
+						await Expense.updateOne(filter3,update3)
+						.then(console.log('Friend Transaction Added Successfully!'))
+						.catch((err) => {
+							console.log(err);
+							console.log('Friend Transaction Adding Failed!')
+						});
+						res.json({status: 'ok'});
+						await Expense.updateOne(filter4,update4)
+						.then(console.log('Friend Transaction Added Successfully!'))
+						.catch((err) => {
+							console.log(err);
+							console.log('Friend Transaction Adding Failed!')
+						});
+						res.json({status: 'ok'});
 					}
-					res.redirect('http://localhost:3000/friend-finance');
+				}
+					// res.redirect('http://localhost:3000/friend-finance');
 				}
 			}
 		}

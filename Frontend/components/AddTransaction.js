@@ -9,7 +9,11 @@ export const AddTransaction = () => {
 
   const onSubmit = async (e) => {
     // e.preventDefault();
-
+    if(amount == 0){
+      window.alert('Transaction amount cannot be 0');
+      e.preventDefault();
+    }
+    else{
     const token = localStorage.getItem('token');
     if(!token){
       window.location.href = ('/');
@@ -27,6 +31,7 @@ export const AddTransaction = () => {
           }),
       });
       const data = await res.json();
+    }
   }
 
   };
@@ -60,6 +65,7 @@ export const AddTransaction = () => {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="₹ Enter amount..."
+            required
           />
         </div>
         <div className="form-control align-center justify-center flex m-1">

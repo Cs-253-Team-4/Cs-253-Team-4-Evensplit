@@ -30,7 +30,7 @@ async function handleRequest(index, accepted, request){
   }).then(res => {
     return res.json()
   }).then(data => {
-    location.reload();
+    window.location.reload();
   })
 }
 

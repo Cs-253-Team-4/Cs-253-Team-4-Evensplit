@@ -2,5 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/homepage": "pages/homepage.js"
+  "/group-home": "pages/group-home.js",
+  "/personal-finance": "pages/personal-finance.js",
+  "/user-finance": "pages/user-finance.js",
+  "/sign-up": "pages/sign-up.js",
+  "/friend-finance": "pages/friend-finance.js"
 }
