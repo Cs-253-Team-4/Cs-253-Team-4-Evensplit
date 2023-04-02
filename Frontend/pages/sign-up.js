@@ -16,8 +16,8 @@ export default function signup() {
 
   async function registerUser(event) {
     event.preventDefault();
-    if(password.length < 8){
-      window.alert('Password must contain atleast 8 characters');
+    if(password.length < 4){
+      window.alert('Password must contain atleast 4 characters');
     }
     else{
       const response = await fetch("http://localhost:1337/api/register", {
