@@ -533,7 +533,6 @@ app.post('/api/deleteEvent', async (req,res) => {	//headers = {'x-access-token' 
 			console.log('new ObjectId("'+eventId+'")');
 			const user = await User.findOne({email: email});
 			const userCalendar = await Calendar.findOne({email: email});
-			console.log(userCalendar);
 			var eventIDToCheck = new ObjectId(eventId.toString());
 			if(userCalendar.personal_events.findIndex(event => event.eventID.equals(eventIDToCheck)) != -1){
 				const filter = {email: email}; 

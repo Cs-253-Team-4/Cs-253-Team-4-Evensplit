@@ -186,7 +186,7 @@ function App() {
                 return res.json()
               }).then(data => {
                 if(data.status == 'error' && data.error != 'unauthorized access') window.location.href = "/";
-                window.location.reload();
+                if(data.status == 'error') window.location.reload();
               }))
             }}
             eventRemove={async (e) => {
@@ -203,7 +203,7 @@ function App() {
                 return res.json()
               }).then(data => {
                 if(data.status == 'error' && data.error != 'unauthorized access') window.location.href = "/";
-                window.location.reload();
+                if(data.status == 'error') window.location.reload();
               })
             }}
            />
