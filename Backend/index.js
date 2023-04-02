@@ -119,6 +119,7 @@ app.post('/api/addExpense', async (req,res) => {    //headers = {'x-access-token
 				await Expense.updateOne(filter,update);
 				console.log('Personal Expense Added Successfully!')
 			}
+			res.json({status: 'ok'})
 		}
 	}      
 })
@@ -480,7 +481,6 @@ app.post('/api/getParticularGroup', async (req,res) => {
 		const user = await User.findOne({email: email});
 		if(!user){
 			res.json({status: 'error', error: 'Invalid token'})
-			console.log('laksdjf')
 		}
 		else{ 
 			const id = req.body.id;
@@ -490,7 +490,9 @@ app.post('/api/getParticularGroup', async (req,res) => {
 			else{
 				const group = await Group.findOne({_id: id});
 				var transactionsArray = group.expenses;
-				var simplifiedTransactions = await splitwise(transactionsArray);			
+				var simplifiedTransactions = await splitwise(transactionsArray);
+				console.log(transactionsArray);
+				console.log(simplifiedTransactions);			
 				res.json({status: 'ok', group: group, simplifiedTransactions: simplifiedTransactions});
 			}
 		}        
