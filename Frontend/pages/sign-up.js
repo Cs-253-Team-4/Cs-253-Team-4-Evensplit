@@ -12,6 +12,7 @@ export default function signup() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [otp, setOTP] = useState("");
   const [password, setPassword] = useState("");
 
   async function registerUser(event) {
@@ -28,6 +29,7 @@ export default function signup() {
         body: JSON.stringify({
           name,
           email,
+          otp,
           password,
         }),
       });
@@ -45,12 +47,38 @@ export default function signup() {
         if(data.error == 'Duplicate email'){
           alert('User Already Registered');
         }
-        else{
+        else if(data.error == 'Wrong Email'){
           alert('Please use your IITK Email');
+        }
+        else{
+          alert('Wrong OTP')
         }
       }
     }
   }
+  async function sendOtp(event) {
+    event.preventDefault();
+      const response = await fetch("http://localhost:1337/api/sendOTP", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+        }),
+      });
+      const data = await response.json();
+      if(data.status == 'ok'){
+        alert('OTP sent successfuly');
+      }
+      else{
+        if(data.error == 'Duplicate email'){
+          alert('User Already Registered');
+        }
+        else if(data.error == 'Wrong email')
+          alert('Please use your IITK Email');
+        }
+      }
   return (
     <>
       {/* <h1 className="text-center font-bold text-5xl mb-30 text-blue-500">EvenSplit</h1> */}
@@ -68,7 +96,7 @@ export default function signup() {
                 Sign-Up
               </div>
               <div className="border-2 w-10 border-blue-500 inline-block mb-2"></div>
-              <form onSubmit={registerUser}>
+              <form>
                 <div className="flex flex-col items-center mb-10">
                   <div className="bg-gray-100 w-64 p-2 flex items-center mb-5">
                     <MdLockOutline className="text-gray-400 mr-3" />
@@ -91,6 +119,26 @@ export default function signup() {
                       className="text-gray-400 bg-gray-100 outline-none flex-1"
                     />
                   </div>
+                  <input
+                  type="submit"
+                  name="sendotp"
+                  placeholder="Send OTP"
+                  value={"Send OTP"}
+                  className="text-xl text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
+                  onClick={sendOtp}
+                  />
+                  <br/>
+                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-5">
+                  <MdLockOutline className="text-gray-400 mr-3" />
+                  <input
+                      value={otp}
+                      onChange={(e) => setOTP(e.target.value)}
+                      type="text"
+                      name="otp"
+                      placeholder="Please enter OTP"
+                      className="text-gray-400 bg-gray-100 outline-none flex-1"
+                    />
+                    </div>
                   <div className="bg-gray-100 w-64 p-2 flex items-center mb-5">
                     <MdLockOutline className="text-gray-400 mr-3" />
                     <input
@@ -107,7 +155,9 @@ export default function signup() {
                 <input
                   type="submit"
                   placeholder="Sign-Up"
+                  name="signup"
                   className="text-xl text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
+                  onClick={registerUser}
                 />
 
               </form>

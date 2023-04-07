@@ -8,11 +8,22 @@ const Group = require('./models/group.model')
 const Calendar = require('./models/calendar.model')
 const Event = require('./models/event.model')
 const Global = require('./models/globalEvents.model')
+const OTP = require('./models/otp.model')
 const { ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-
 const splitwise = require('./Functions/splitwise')
+const nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+  host: 'smtp.mail.yahoo.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: 'shouryatrikha12@yahoo.com',
+    pass: 'epqzlhxaqazgeirl'
+  }
+});
 
 app.use(cors())
 app.use(express.json())
@@ -38,32 +49,83 @@ function isValid(token){
 	}
 }
 
+function generateOTP() {
+	var string = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	let OTP = '';
+	var len = string.length;
+	for (let i = 0; i < 6; i++ ) {
+			OTP += string[Math.floor(Math.random() * len)];
+	}
+	return OTP;
+}
+
 app.post('/api/register', async (req, res) => { //body = {name, email, password}
-		const user = await User.findOne({email: req.body.email});
-		if(!user){
-			const str = req.body.email;
-			var domain = str.substring(
-				str.indexOf("@") + 1);
-			if(domain!="iitk.ac.in"){
-				res.json({ status: 'error', error: 'Wrong email' })
+	const user = await User.findOne({email: req.body.email});
+	if(!user){
+			const otp = req.body.otp;
+			const userotp = await OTP.findOne({email: req.body.email})
+			if(!userotp || otp!=userotp.OTP){
+				res.json({status: 'error', error: 'invalid otp'})
 			}
 			else{
-				const newPassword = await bcrypt.hash(req.body.password, 10)
-				await User.create({
-					name: req.body.name,
-					email: req.body.email,
-					password: newPassword,
-					isAdmin: false,
-				}).then(Expense.create({email: req.body.email})).then(Calendar.create({email: req.body.email}));
-				res.json({ status: 'ok' });
-				console.log('User registered successfully!');
-			}
+			const newPassword = await bcrypt.hash(req.body.password, 10)
+			await User.create({
+				name: req.body.name,
+				email: req.body.email,
+				password: newPassword,
+				isAdmin: false,
+			}).then(Expense.create({email: req.body.email})).then(Calendar.create({email: req.body.email}));
+			res.json({ status: 'ok' });
+			console.log('User registered successfully!');
 		}
-		else{
-			console.log('User already registered');
-			res.json({ status: 'error', error: 'Duplicate email' })
+	}
+	else{
+		console.log('User already registered');
+		res.json({ status: 'error', error: 'Duplicate email' })
+	}
+
+})
+
+app.post('/api/sendOTP', async (req, res) => { //body = {email}
+var otp=generateOTP();
+console.log(req.body);
+const email = req.body.email;
+var domain = email.substring(
+email.indexOf("@") + 1);
+if(domain!="iitk.ac.in"){
+	res.json({ status: 'error', error: 'Wrong email' })
+}
+else{
+	const user = await User.findOne({email: req.body.email});
+	if(!user){
+	var mailOptions = {
+		from: 'shouryatrikha12@yahoo.com',
+		to: email,
+		subject: "Email Verification OTP for Evensplit",
+		html: `Hello,<br> Please find below your requested OTP for email verification: <br> <h1>${otp}</h1><br>Regards <br> Evensplit Team<br>`
+	};
+
+	transporter.sendMail(mailOptions, function (error) {
+		if (error) {
+			console.log(error);
+		} else {
+			console.log('Email sent to: ' + req.body.email);
 		}
+	});
+	const userotp = await OTP.findOne({email: req.body.email})
+	if(!userotp){
+		await OTP.create({email: email, OTP: otp,})
+	}
+	else{
+		await OTP.updateOne({email: email},{$set : {OTP: otp}})
+	}
 	
+	res.json({status: 'ok'})
+}
+else{
+	res.json({status: 'error', error: 'Duplicate email'})
+}
+}
 })
 
 app.post('/api/login', async (req, res) => {    //body = {email, password}
@@ -490,9 +552,7 @@ app.post('/api/getParticularGroup', async (req,res) => {
 			else{
 				const group = await Group.findOne({_id: id});
 				var transactionsArray = group.expenses;
-				var simplifiedTransactions = await splitwise(transactionsArray);
-				console.log(transactionsArray);
-				console.log(simplifiedTransactions);			
+				var simplifiedTransactions = await splitwise(transactionsArray);		
 				res.json({status: 'ok', group: group, simplifiedTransactions: simplifiedTransactions});
 			}
 		}        

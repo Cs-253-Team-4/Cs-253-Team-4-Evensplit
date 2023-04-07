@@ -4,6 +4,7 @@
   "/_document": "pages/_document.js",
   "/homepage": "pages/homepage.js",
   "/user-finance": "pages/user-finance.js",
-  "/particular-group": "pages/particular-group.js",
-  "/group-home": "pages/group-home.js"
+  "/": "pages/index.js",
+  "/group-home": "pages/group-home.js",
+  "/friend-finance": "pages/friend-finance.js"
 }
