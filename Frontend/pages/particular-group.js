@@ -217,7 +217,10 @@ function App() {
                   );
                 })}
             </div>
-              
+            <button class="rounded-full w-15 py-0.5 px-3 m-1 text-white bg-purple-400" onClick={() => window.location.href = './add-member/?id='+`${group._id}`}>
+                            {" "}
+                            Add Members{" "}
+                          </button>  
               {/* </form> */}
             </div>
             

@@ -83,12 +83,22 @@ function App() {
   }
 
   const renderEventContent = (eventInfo) => {
+    function handleMouseOver(){
+
+    }
+
+    function handleMouseOut(){
+
+    }    
+
     return (
       <>        
-        <code title={eventInfo.event._def.extendedProps.description}>
+        { <code title={eventInfo.event._def.extendedProps.description}>
+        <div onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
           <b>{eventInfo.timeText} </b>
           <i>{eventInfo.event.title}</i>
-        </code>
+        </div>
+        </code> }
       </>
     )
   }
@@ -145,9 +155,6 @@ function App() {
             eventClick={handleEventClick}
             // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
             eventAdd={async (e) => {
-              console.log(e.event._def.extendedProps.description)
-              console.log(e.event.start);
-              console.log(e.event.end);
               var start_time = e.event.start;
               var end_time = e.event.end;
               await fetch('http://localhost:1337/api/addEvent', {

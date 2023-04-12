@@ -495,6 +495,46 @@ app.post('/api/createGroup', async (req,res) => {	//headers = {'x-access-token' 
       
 })
 
+app.post('/api/addMembers', async (req,res) => {	//headers = {'x-access-token' : token}, body = {title, Array of emails}
+	console.log('create group api called');
+	const token = req.headers['x-access-token'];
+    const userAuth = isValid(token);
+	if(userAuth.valid == false){
+		res.json({status: 'error', error: 'Invalid token'});
+	}
+	else{
+		const decoded = userAuth.decoded;
+        const email = decoded.email;
+		const user = await User.findOne({email: email});
+		if(!user){
+			res.json({status: 'error', error: 'Invalid token'});
+		}
+		else{ 
+			var i;
+			const groupID = req.body.groupID;
+			var members = req.body.members;
+			var members_with_name = [];
+			for(i=0;i<req.body.members.length;i++){
+				var member = await User.findOne({email: req.body.members[i].email},{name:1});
+				members_with_name.push({email: req.body.members[i].email, name: member.name})
+			}
+			if(!ObjectId.isValid(groupID)){
+				res.json({status: 'error', error: 'malformed group id'})
+			}
+			else{
+				filter = {_id: groupID};
+				update = {$push : {members : {$each : members}}}
+				await Group.updateOne(filter,update)  
+				for(i=0;i<members.length;i++){
+					await Expense.updateOne({email: members[i].email},{$push: {groups: {'groupID': groupID}}})
+				} 
+				res.json({status: 'ok'});
+			}
+		}
+	}
+      
+})
+
 app.post('/api/addExpenseToGroup', async (req,res) => {	//headers = {'x-access-token' : token}, body = {groupID, array of returners, amount, message, }
 	console.log('add expense to group api called');
     const token = req.headers['x-access-token'];
@@ -585,7 +625,7 @@ app.post('/api/getParticularGroup', async (req,res) => {
 					if(group == null) res.json({status: 'error', error: 'invalid group'});
 					else{
 						var transactionsArray = group.expenses;
-						var simplifiedTransactions = await splitwise(transactionsArray);		
+						var simplifiedTransactions = await splitwise(transactionsArray);	
 						res.json({status: 'ok', group: group, simplifiedTransactions: simplifiedTransactions});
 					}
 				}

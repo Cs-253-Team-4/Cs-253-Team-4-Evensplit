@@ -3,5 +3,8 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/homepage": "pages/homepage.js",
-  "/calendar": "pages/calendar.js"
+  "/": "pages/index.js",
+  "/user-finance": "pages/user-finance.js",
+  "/group-home": "pages/group-home.js",
+  "/particular-group": "pages/particular-group.js"
 }
