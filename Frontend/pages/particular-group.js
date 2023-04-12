@@ -167,12 +167,14 @@ function App() {
       return res.json()
     }).then(data => {
       if(data.status == 'error') window.location.href="/"
-      setGroup(data.group);
-      setMembers(data.group.members);
-      setExpenses(data.group.expenses.reverse());
-      setSimplifiedTransactions(data.simplifiedTransactions);
-      setOutputGraphData({nodes : data.group.members.map(item => ({ id: item.email, x: 300 + 200*Math.random() , y: 400*Math.random()})), links: data.simplifiedTransactions.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }))});
-      setInputGraphConfig(config);
+      else{
+        setGroup(data.group);
+        setMembers(data.group.members);
+        setExpenses(data.group.expenses.reverse());
+        setSimplifiedTransactions(data.simplifiedTransactions);
+        setOutputGraphData({nodes : data.group.members.map(item => ({ id: item.email, x: 300 + 200*Math.random() , y: 400*Math.random()})), links: data.simplifiedTransactions.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }))});
+        setInputGraphConfig(config);
+      }
     })
   }
 
