@@ -41,7 +41,7 @@ export default function Home() {
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <main className="flex flex-col items-center justify-center flex-1 text-center m-6 ">
-        <div className="bg-white rounded-2xl shadow-2xl flex w-2/3 max-w-4xl">
+        <div className="bg-white rounded-2xl shadow-2xl m-5 flex w-2/3 max-w-4xl">
           <div className="w-3/5 p-5">
             <img
               src="https://i.ibb.co/JvG6Lzn/logo-new.png"
@@ -95,14 +95,6 @@ export default function Home() {
                   className="text-xl text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
                 />
               </form>
-              <div className="text-sm mt-5">
-                <Link
-                  href={"/"}
-                  className="text-black px-4 py-1  hover:text-blue-500"
-                >
-                  Admin? Login Here
-                </Link>
-              </div>
             </div>
           </div>
           <div className="bg-blue-400 text-white w-2/5 rounded-2xl rounded-br-2xl py-36 px-10">

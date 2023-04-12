@@ -91,7 +91,7 @@ export default function signup() {
   return (
     <>
       {/* <h1 className="text-center font-bold text-5xl mb-30 text-blue-500">EvenSplit</h1> */}
-      <main className="flex flex-col items-center justify-center flex-1 text-center m-10">
+      <main className="flex flex-col items-center justify-center flex-1 text-center m-7">
         <div className="bg-white rounded-2xl shadow-2xl flex w-2/3 max-w-4xl">
           <div className="w-3/5 p-5">
             <img
@@ -100,14 +100,14 @@ export default function signup() {
               border="0"
               className="h-20 w-25"
             />
-            <div className="py-10">
+            <div>
               <div className="text-3xl font-bold text-blue-500 mb-2">
                 Sign-Up
               </div>
               <div className="border-2 w-10 border-blue-500 inline-block mb-2"></div>
               <form>
                 <div className="flex flex-col items-center mb-10">
-                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-5">
+                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-2">
                     <MdLockOutline className="text-gray-400 mr-3" />
                     <input
                       value={name}
@@ -117,7 +117,7 @@ export default function signup() {
                       className="text-gray-400 bg-gray-100 outline-none flex-1"
                     />
                   </div>
-                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-5">
+                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-2">
                     <FaRegEnvelope className="text-gray-400 mr-3" />
                     <input
                       value={email}
@@ -133,11 +133,10 @@ export default function signup() {
                   name="sendotp"
                   placeholder="Send OTP"
                   value={"Send OTP"}
-                  className="text-xl text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
+                  className="text-s text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
                   onClick={sendOtp}
                   />
-                  <br/>
-                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-5">
+                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-2 mt-2">
                   <MdLockOutline className="text-gray-400 mr-3" />
                   <input
                       value={otp}
@@ -148,7 +147,7 @@ export default function signup() {
                       className="text-gray-400 bg-gray-100 outline-none flex-1"
                     />
                     </div>
-                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-5">
+                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-2">
                     <MdLockOutline className="text-gray-400 mr-3" />
                     <input
                       value={password}
@@ -159,7 +158,7 @@ export default function signup() {
                       className="text-gray-400 bg-gray-100 outline-none flex-1"
                     />
                   </div>
-                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-5">
+                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-2">
                     <MdLockOutline className="text-gray-400 mr-3" />
                     <input
                       value={confirmPassword}
@@ -170,15 +169,15 @@ export default function signup() {
                       className="text-gray-400 bg-gray-100 outline-none flex-1"
                     />
                   </div>
-                  
-                </div>
-                <input
+                  <input
                   type="submit"
                   placeholder="Sign-Up"
                   name="signup"
-                  className="text-xl text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
+                  className="text-s text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
                   onClick={registerUser}
                 />
+                </div>
+               
 
               </form>
             </div>

@@ -114,7 +114,7 @@ export default function signup() {
                   name="sendotp"
                   placeholder="Send OTP"
                   value={"Send OTP"}
-                  className="text-xl text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
+                  className="text-m text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
                   onClick={sendOtp}
                   />
                   <br/>
@@ -129,7 +129,7 @@ export default function signup() {
                       className="text-gray-400 bg-gray-100 outline-none flex-1"
                     />
                     </div>
-                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-5">
+                  <div className="bg-gray-100 w-64 p-2 flex items-center">
                     <MdLockOutline className="text-gray-400 mr-3" />
                     <input
                       value={password}
@@ -140,15 +140,15 @@ export default function signup() {
                       className="text-gray-400 bg-gray-100 outline-none flex-1"
                     />
                   </div>
-                  
-                </div>
-                <input
+                  <input
                   type="submit"
                   placeholder="Sign-Up"
                   name="signup"
-                  className="text-xl text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
+                  className="text-m text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5 mt-4 hover:bg-blue-500 hover:text-white"
                   onClick={setNewPassword}
                 />
+                </div>
+                
 
               </form>
             </div>

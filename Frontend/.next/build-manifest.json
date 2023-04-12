@@ -15,11 +15,6 @@
   ],
   "rootMainFiles": [],
   "pages": {
-    "/": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/index.js"
-    ],
     "/_app": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
@@ -35,10 +30,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/calendar.js"
     ],
-    "/homepage": [
+    "/particular-group": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/homepage.js"
+      "static/chunks/pages/particular-group.js"
     ]
   },
   "ampFirstPages": []
