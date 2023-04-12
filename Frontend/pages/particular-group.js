@@ -172,7 +172,7 @@ function App() {
         setMembers(data.group.members);
         setExpenses(data.group.expenses.reverse());
         setSimplifiedTransactions(data.simplifiedTransactions);
-        setOutputGraphData({nodes : data.group.members.map(item => ({ id: item.email, x: 300 + 200*Math.random() , y: 400*Math.random()})), links: data.simplifiedTransactions.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }))});
+        setOutputGraphData({nodes : data.group.members.map(item => ({ id: item.email, x: 215 + 600*Math.random() , y: 100+800*Math.random()})), links: data.simplifiedTransactions.map(({ person1, person2, amount }) => ({ source: person1, target: person2, amount }))});
         setInputGraphConfig(config);
       }
     })
@@ -220,28 +220,7 @@ function App() {
               
               {/* </form> */}
             </div>
-            <div>
-            <h3
-              className="text-2xl font-bold text-gray-500 m-2"
-              style={{ textDecoration:"underline", marginTop:"30px" }}
-            >
-              Graph
-            </h3>
-            <h5 className="m-2 text-gray-500">Drag nodes as desired</h5>
-                { 
-                  Object.keys(outputGraphData).length && Object.keys(inputGraphConfig).length ? (
-                    <>
-                      {/* <br/><br/> */}
-                      <Graph
-                        id="graph-id" // id is mandatory
-                        data={outputGraphData}
-                        config={inputGraphConfig}
-                      />
-                      {/* <br/><br/> */}
-                    </>
-                  ) : null
-                }
-            </div>
+            
           </div>
           <div className="w-1/3 flex flex-col p-7 m-5 rounded-2xl shadow-2xl">
             {/* <AddGroupTransaction /> */}
@@ -374,7 +353,28 @@ function App() {
           </div>
         </div>
         <div className="w-3/3 flex flex-col items-center p-7 m-5 mx-auto rounded-2xl shadow-2xl">
-            
+        <div>
+            <h3
+              className="text-2xl font-bold text-gray-500 m-2"
+              style={{ textDecoration:"underline", marginTop:"30px" }}
+            >
+              Graph
+            </h3>
+            <h5 className="m-2 text-gray-500">Drag nodes as desired</h5>
+                { 
+                  Object.keys(outputGraphData).length && Object.keys(inputGraphConfig).length ? (
+                    <>
+                      {/* <br/><br/> */}
+                      <Graph
+                        id="graph-id" // id is mandatory
+                        data={outputGraphData}
+                        config={inputGraphConfig}
+                      />
+                      {/* <br/><br/> */}
+                    </>
+                  ) : null
+                }
+            </div>
               {/* <br/><br/><br/><br/> */}
               
               

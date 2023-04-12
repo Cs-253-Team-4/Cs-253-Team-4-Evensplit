@@ -65,7 +65,10 @@ app.post('/api/register', async (req, res) => { //body = {name, email, password}
 			const otp = req.body.otp;
 			const userotp = await OTP.findOne({email: req.body.email})
 			if(!userotp || otp!=userotp.OTP){
-				res.json({status: 'error', error: 'invalid otp'})
+				res.json({status: 'error', error: 'invalid otp'});
+			}
+			else if(req.body.password != req.body.confirmPassword){
+				res.json({status: 'error', error: 'passwords do not match'});
 			}
 			else{
 			const newPassword = await bcrypt.hash(req.body.password, 10)

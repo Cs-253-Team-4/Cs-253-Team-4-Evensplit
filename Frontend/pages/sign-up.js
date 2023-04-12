@@ -14,11 +14,15 @@ export default function signup() {
   const [email, setEmail] = useState("");
   const [otp, setOTP] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   async function registerUser(event) {
     event.preventDefault();
     if(password.length < 4){
       window.alert('Password must contain atleast 4 characters');
+    }
+    else if(password != confirmPassword){
+      alert('Passwords do not match!')
     }
     else{
       const response = await fetch("http://localhost:1337/api/register", {
@@ -31,6 +35,7 @@ export default function signup() {
           email,
           otp,
           password,
+          confirmPassword
         }),
       });
 
@@ -49,6 +54,9 @@ export default function signup() {
         }
         else if(data.error == 'Wrong Email'){
           alert('Please use your IITK Email');
+        }
+        else if(data.error == 'passwords do not match'){
+          alert('Passwords do not match!')
         }
         else{
           alert('Wrong OTP')
@@ -148,6 +156,17 @@ export default function signup() {
                       type="password"
                       name="password"
                       placeholder="Set Password"
+                      className="text-gray-400 bg-gray-100 outline-none flex-1"
+                    />
+                  </div>
+                  <div className="bg-gray-100 w-64 p-2 flex items-center mb-5">
+                    <MdLockOutline className="text-gray-400 mr-3" />
+                    <input
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      type="password"
+                      name="confirmPassword"
+                      placeholder="Confirm Password"
                       className="text-gray-400 bg-gray-100 outline-none flex-1"
                     />
                   </div>
