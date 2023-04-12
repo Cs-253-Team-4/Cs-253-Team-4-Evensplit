@@ -2,9 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/homepage": "pages/homepage.js",
   "/": "pages/index.js",
-  "/user-finance": "pages/user-finance.js",
-  "/group-home": "pages/group-home.js",
-  "/particular-group": "pages/particular-group.js"
+  "/homepage": "pages/homepage.js",
+  "/calendar": "pages/calendar.js"
 }
