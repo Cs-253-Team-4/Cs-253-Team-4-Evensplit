@@ -86,46 +86,70 @@ app.post('/api/register', async (req, res) => { //body = {name, email, password}
 
 })
 
-app.post('/api/sendOTP', async (req, res) => { //body = {email}
-var otp=generateOTP();
-console.log(req.body);
-const email = req.body.email;
-var domain = email.substring(
-email.indexOf("@") + 1);
-if(domain!="iitk.ac.in"){
-	res.json({ status: 'error', error: 'Wrong email' })
-}
-else{
+app.post('/api/setNewPassword', async (req, res) => { //body = {name, email, password}
 	const user = await User.findOne({email: req.body.email});
 	if(!user){
-	var mailOptions = {
-		from: 'shouryatrikha12@yahoo.com',
-		to: email,
-		subject: "Email Verification OTP for Evensplit",
-		html: `Hello,<br> Please find below your requested OTP for email verification: <br> <h1>${otp}</h1><br>Regards <br> Evensplit Team<br>`
-	};
-
-	transporter.sendMail(mailOptions, function (error) {
-		if (error) {
-			console.log(error);
-		} else {
-			console.log('Email sent to: ' + req.body.email);
-		}
-	});
-	const userotp = await OTP.findOne({email: req.body.email})
-	if(!userotp){
-		await OTP.create({email: email, OTP: otp,})
+		console.log('User already registered');
+		res.json({ status: 'error', error: 'Invalid User' })
 	}
 	else{
-		await OTP.updateOne({email: email},{$set : {OTP: otp}})
+		const otp = req.body.otp;
+			const userotp = await OTP.findOne({email: req.body.email})
+			if(!userotp || otp!=userotp.OTP){
+				res.json({status: 'error', error: 'invalid otp'})
+			}
+			else{
+			const newPassword = await bcrypt.hash(req.body.password, 10)
+			filter = {email: req.body.email};
+			update = {$set: {password: newPassword}}
+			await User.updateOne(filter,update)
+			res.json({ status: 'ok' });
+			console.log('Password updated successfully!');
+		}
 	}
-	
-	res.json({status: 'ok'})
-}
-else{
-	res.json({status: 'error', error: 'Duplicate email'})
-}
-}
+
+})
+
+app.post('/api/sendOTP', async (req, res) => { //body = {email}
+	var otp=generateOTP();
+	console.log(req.body);
+	const email = req.body.email;
+	var domain = email.substring(
+	email.indexOf("@") + 1);
+	if(domain!="iitk.ac.in"){
+		res.json({ status: 'error', error: 'Wrong email' })
+	}
+	else{
+		const user = await User.findOne({email: req.body.email});
+		if(!user || req.body.type == "forgot password"){
+		var mailOptions = {
+			from: 'shouryatrikha12@yahoo.com',
+			to: email,
+			subject: "Email Verification OTP for Evensplit",
+			html: `Hello,<br> Please find below your requested OTP for email verification: <br> <h1>${otp}</h1><br>Regards <br> Evensplit Team<br>`
+		};
+
+		transporter.sendMail(mailOptions, function (error) {
+			if (error) {
+				console.log(error);
+			} else {
+				console.log('Email sent to: ' + req.body.email);
+			}
+		});
+		const userotp = await OTP.findOne({email: req.body.email})
+		if(!userotp){
+			await OTP.create({email: email, OTP: otp,})
+		}
+		else{
+			await OTP.updateOne({email: email},{$set : {OTP: otp}})
+		}
+		
+		res.json({status: 'ok'})
+	}
+	else{
+		res.json({status: 'error', error: 'Duplicate email'})
+	}
+	}
 })
 
 app.post('/api/login', async (req, res) => {    //body = {email, password}

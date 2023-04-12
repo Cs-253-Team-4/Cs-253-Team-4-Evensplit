@@ -65,6 +65,7 @@ export default function signup() {
         },
         body: JSON.stringify({
           email,
+          type: "sign up",
         }),
       });
       const data = await response.json();

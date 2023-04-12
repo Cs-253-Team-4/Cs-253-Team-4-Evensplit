@@ -110,12 +110,14 @@ async function splitwise(transactionsArray) {
 		var p2 = heap_top(negative);
 		pop_heap(positive);
 		pop_heap(negative);
-		let exp = new Expense(p2.second, p1.second, Math.min(p1.first, p2.first));
-		result.push(exp);
-		if(p1.first > p2.first) {
-			push_heap(positive, p1.first - p2.first, p1.second);
-		} else if(p1.first < p2.first) {
-			push_heap(negative, p2.first - p1.first, p2.second);
+		if(p1!=null && p2!=null){
+			let exp = new Expense(p2.second, p1.second, Math.min(p1.first, p2.first));		
+			result.push(exp);
+			if(p1.first > p2.first) {
+				push_heap(positive, p1.first - p2.first, p1.second);
+			} else if(p1.first < p2.first) {
+				push_heap(negative, p2.first - p1.first, p2.second);
+			}
 		}
 	}
 	return result;

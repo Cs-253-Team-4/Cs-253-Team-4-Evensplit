@@ -39,7 +39,7 @@ export default function Home() {
   }
   return (
     <>
-
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <main className="flex flex-col items-center justify-center flex-1 text-center m-6 ">
         <div className="bg-white rounded-2xl shadow-2xl flex w-2/3 max-w-4xl">
           <div className="w-3/5 p-5">
@@ -83,7 +83,7 @@ export default function Home() {
                       <input type="checkbox" name="remember" className="mr-2" />
                       Remember Me
                     </label>
-                    <a href="#" className="text-xs hover:text-blue-500">
+                    <a href="/forgot-password" className="text-xs hover:text-blue-500">
                       Forgot Password?
                     </a>
                   </div>
