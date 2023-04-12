@@ -550,10 +550,18 @@ app.post('/api/getParticularGroup', async (req,res) => {
 				res.json({status: 'error'});
 			}
 			else{
-				const group = await Group.findOne({_id: id});
-				var transactionsArray = group.expenses;
-				var simplifiedTransactions = await splitwise(transactionsArray);		
-				res.json({status: 'ok', group: group, simplifiedTransactions: simplifiedTransactions});
+				if(!ObjectId.isValid(id)){
+					res.json({status: 'error', error: 'malformed group id'})
+				}
+				else{
+					const group = await Group.findOne({_id: id});
+					if(group == null) res.json({status: 'error', error: 'invalid group'});
+					else{
+						var transactionsArray = group.expenses;
+						var simplifiedTransactions = await splitwise(transactionsArray);		
+						res.json({status: 'ok', group: group, simplifiedTransactions: simplifiedTransactions});
+					}
+				}
 			}
 		}        
 	}    

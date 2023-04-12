@@ -30,25 +30,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/friend-finance": [
+    "/particular-group": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/friend-finance.js"
-    ],
-    "/group-home": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/group-home.js"
-    ],
-    "/homepage": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/homepage.js"
-    ],
-    "/user-finance": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/user-finance.js"
+      "static/chunks/pages/particular-group.js"
     ]
   },
   "ampFirstPages": []
