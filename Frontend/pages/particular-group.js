@@ -103,16 +103,21 @@ function App() {
   const Member = members?.map((Member_List) => {
     return (
       <>
-        <Checkbox
-          key={Member_List.email}
-          type="checkbox"
-          name={Member_List.name}
-          id={Member_List.email}
-          handleClick={handleClick}
-          isChecked={isCheck.includes(Member_List.email)}
-          className="m-10"
-        />
-        <p> {Member_List.name} </p>
+        <div className="flex flex-nowrap items-center bg-neutral-400 mx-2 px-1 my-1 rounded-lg">
+          <Checkbox
+            key={Member_List.email}
+            type="checkbox"
+            name={Member_List.name}
+            id={Member_List.email}
+            handleClick={handleClick}
+            isChecked={isCheck.includes(Member_List.email)}
+            // className="bg-gray-300"
+          />
+          <p className=" ml-2 mr-5 inline-block whitespace-nowrap">
+            {" "}
+            {Member_List.name}{" "}
+          </p>
+        </div>
       </>
     );
   });
@@ -170,17 +175,32 @@ function App() {
           setMembers(data.group.members);
           setExpenses(data.group.expenses.reverse());
           setSimplifiedTransactions(data.simplifiedTransactions);
+          let increment = 0;
+          let vertices = data.group.members.length - 1;
           setOutputGraphData({
-            nodes: data.group.members.map((item) => ({
-              id: item.email,
-              x: 215 + 600 * Math.random(),
-              y: 100 + 800 * Math.random(),
-            })),
+            nodes: data.group.members.map((item) => {
+              const x =
+                450 +
+                (7.0 / 9.0) *
+                  450 *
+                  Math.cos((2 * Math.PI * increment) / vertices);
+              const y =
+                450 +
+                (7.0 / 9.0) *
+                  450 *
+                  Math.sin((2 * Math.PI * increment) / vertices);
+              increment += 1;
+              return {
+                id: item.email.split("@")[0],
+                x,
+                y,
+              };
+            }),
             links: data.simplifiedTransactions.map(
               ({ person1, person2, amount }) => ({
-                source: person1,
-                target: person2,
-                amount,
+                source: person1.split("@")[0],
+                target: person2.split("@")[0],
+                amount: "Rs." + amount.toFixed(2),
               })
             ),
           });
@@ -223,7 +243,7 @@ function App() {
                 placeholder="Search..."
                 onChange={(e) => setQuery(e.target.value.toLowerCase())}
               /> */}
-              <div className="h-4/5 overflow-auto ">
+              <div className="overflow-auto " style={{ height: "580px" }}>
                 {members.map((member) => {
                   return (
                     <button
@@ -241,9 +261,16 @@ function App() {
                     </button>
                   );
                 })}
-                
               </div>
-              <button class="rounded-full w-15 py-0.5 px-3 m-1 mt-5 text-white bg-purple-400" onClick={() => window.location.href = './add-member/?id='+`${group._id}`}> {" "} Add Members{" "} </button>
+              <button
+                class="rounded-full w-15 py-0.5 px-3 m-1 mt-5 text-white bg-purple-400"
+                onClick={() =>
+                  (window.location.href = "./add-member/?id=" + `${group._id}`)
+                }
+              >
+                {" "}
+                Add Members{" "}
+              </button>
 
               {/* </form> */}
             </div>
@@ -256,7 +283,7 @@ function App() {
             >
               Add Group Transaction
             </h3>
-            <form onSubmit={onSubmit} className="h-72">
+            <form onSubmit={onSubmit} className="h-64">
               <div className="form-control align-center justify-center flex m-2">
                 {/* <label htmlFor="text" className='mr-3'>Text</label> */}
                 <input
@@ -280,8 +307,7 @@ function App() {
                   required
                 />
               </div>
-
-              <div className=" overflow-x-scroll ">
+              <div className="flex justify-center bg-neutral-400 mx-2 px-1 my-1 rounded-lg">
                 <Checkbox
                   type="checkbox"
                   name="selectAll"
@@ -289,14 +315,16 @@ function App() {
                   handleClick={handleSelectAll}
                   isChecked={isCheckAll}
                 />
-                Select All
+                <div className="ml-2 mr-5">Select All</div>
+              </div>
+              <div className=" overflow-x-scroll ">
                 <div className="flex flex-row">{Member}</div>
               </div>
               <button className="btn">Add Group transaction</button>
             </form>
             {/* <SettleUp /> */}
             <h3
-              className="text-2xl font-bold text-gray-500 m-2 mt-5"
+              className="text-2xl font-bold text-gray-500 m-2 mt-6"
               style={{ borderBottom: "thick solid gray" }}
             >
               Settle Up
