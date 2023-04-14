@@ -2,7 +2,7 @@ import Head from "next/head";
 import { FaRegEnvelope } from "react-icons/fa";
 import { MdLockOutline } from "react-icons/md";
 import Link from "next/link";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
 import Footer from "../components/Footer"
 // const inter = Inter({ subsets: ['latin'] })
@@ -14,6 +14,8 @@ export default function signup() {
   const [email, setEmail] = useState("");
   const [otp, setOTP] = useState("");
   const [password, setPassword] = useState("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [countdown, setCountdown] = useState(60);
 
   async function setNewPassword(event) {
     event.preventDefault();
@@ -70,6 +72,11 @@ export default function signup() {
       const data = await response.json();
       if(data.status == 'ok'){
         alert('OTP sent successfuly');
+        setIsButtonDisabled(true);
+        setCountdown(60);
+        setTimeout(() => {
+          setIsButtonDisabled(false);
+        }, 60000);
       }
       else{
         if(data.error == 'Duplicate email'){
@@ -79,6 +86,19 @@ export default function signup() {
           alert('Please use your IITK Email');
         }
       }
+
+    useEffect(() => {
+      if (countdown > 0) {
+        const timer = setTimeout(() => {
+          setCountdown(countdown - 1);
+        }, 1000); // update countdown every 1 second
+        return () => clearTimeout(timer);
+      } else {
+        setIsButtonDisabled(false);
+      }
+    }, [countdown, setIsButtonDisabled]); 
+      
+
   return (
     <>
       {/* <h1 className="text-center font-bold text-5xl mb-30 text-blue-500">EvenSplit</h1> */}
@@ -114,10 +134,17 @@ export default function signup() {
                   name="sendotp"
                   placeholder="Send OTP"
                   value={"Send OTP"}
-                  className="text-m text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
+                  className={isButtonDisabled ? "text-s text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5" : "text-s text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"}
                   onClick={sendOtp}
+                  disabled={isButtonDisabled}
                   />
-                  <br/>
+                  <p className="text-gray-500 w-64 p-2 flex items-center">
+                    {isButtonDisabled === true ? (
+                      <p>If you didn't receive OTP, please request again in {countdown}s</p>
+                    ) : (
+                      null
+                    )}
+                  </p>
                   <div className="bg-gray-100 w-64 p-2 flex items-center mb-5">
                   <MdLockOutline className="text-gray-400 mr-3" />
                   <input
