@@ -176,7 +176,7 @@ function App() {
           setExpenses(data.group.expenses.reverse());
           setSimplifiedTransactions(data.simplifiedTransactions);
           let increment = 0;
-          let vertices = data.group.members.length - 1;
+          let vertices = data.group.members.length ;
           setOutputGraphData({
             nodes: data.group.members.map((item) => {
               const x =
