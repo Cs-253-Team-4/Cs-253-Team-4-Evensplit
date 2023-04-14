@@ -1,4 +1,5 @@
 const express = require('express')
+require('dotenv').config()
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
@@ -28,9 +29,7 @@ var transporter = nodemailer.createTransport({
 app.use(cors())
 app.use(express.json())
 
-const url = 'mongodb+srv://evensplit:SSgqUwzAYpbCadWf@evensplit.dsgcmp4.mongodb.net/Data?retryWrites=true&w=majority';
-
-mongoose.connect(url, {
+mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -42,7 +41,7 @@ mongoose.connect(url, {
 
 function isValid(token){
 	try{
-		const decoded = jwt.verify(token, 'secret123');
+		const decoded = jwt.verify(token, process.env.SECRET);
 		return {'valid': true, 'decoded': decoded}
 	}catch(err){
 		return {'valid': false}
@@ -175,7 +174,7 @@ app.post('/api/login', async (req, res) => {    //body = {email, password}
 					name: user.name,
 					email: user.email,
 				},
-				'secret123'
+				process.env.SECRET
 			)
 			console.log('Login Successful!')
 			console.log(user.email);	
@@ -697,8 +696,6 @@ app.post('/api/deleteEvent', async (req,res) => {	//headers = {'x-access-token' 
 			console.log('new ObjectId("'+eventId+'")');
 			const user = await User.findOne({email: email});
 			const userCalendar = await Calendar.findOne({email: email});
-			// if(eventId.toString().length)
-			console.log(eventId.toString());
 			var eventIDToCheck = new ObjectId(eventId.toString());
 			if(userCalendar.personal_events.findIndex(event => event.eventID.equals(eventIDToCheck)) != -1){
 				const filter = {email: email}; 
@@ -758,6 +755,6 @@ app.get('/api/getEvents', async (req,res) => {	//headers = {'x-access-token' : t
 	}    
 })
 
-app.listen(1337, () => {
-	console.log('Server started on 1337')
+app.listen(process.env.PORT, () => {
+	console.log('Server started on port ' + process.env.PORT)
 })
