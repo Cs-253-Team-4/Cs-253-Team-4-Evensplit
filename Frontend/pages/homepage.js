@@ -1,31 +1,97 @@
-import Link from "next/link";
-import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-//import Logo from "./Logo";
-//import NavItem from ".../components/NavItem";
-//import Navbar from "../components/Navbar";
+import Footer from "../components/Footer"
+import Intro from "../components/Intro";
+import About from "../components/About";
+import Team from "../components/Team";
+import Services from "../components/Services";
+import { NoSsr } from '@material-ui/core';
+import { animateScroll } from 'react-scroll';
 
-export default function homepage(){
+const scrollToTop = () => {
+  animateScroll.scrollToTop();
+};
+
+const App = () => {
+  const [landingPageData, setLandingPageData] = useState({
+    "About": {
+      "paragraph":
+      `The aim of our product is to help students manage their time and expenses in an efficient way. Our integrated calendar will assimilate the various events and display their details according to the student's interests. It also allows students to document their personal expenses on food, groceries, travel, etc. as well as manage the expenses incurred in a group.`,
+      "Why": [
+        "Form groups and simplify transactions within a Group",
+        "Add an expense",
+        "Request money",
+        "Get summary of expenses and optimise expenses",
+      ],
+      "Why2": [
+        "Add personal events",
+        "Monthly, weekly and hourly view of calendar",
+        "Admin can add global events",
+        "Get details regarding events"
+      ]
+    },
+    "Services": [
+      {
+        "icon": "fa fa-wordpress",
+        "name": "Lorem ipsum dolor",
+        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+      },
+      {
+        "icon": "fa fa-cart-arrow-down",
+        "name": "Consectetur adipiscing",
+        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+      },
+      {
+        "icon": "fa fa-cloud-download",
+        "name": "Lorem ipsum dolor",
+        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+      },
+      {
+        "icon": "fa fa-language",
+        "name": "Consectetur adipiscing",
+        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+      },
+      {
+        "icon": "fa fa-plane",
+        "name": "Lorem ipsum dolor",
+        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+      },
+      {
+        "icon": "fa fa-pie-chart",
+        "name": "Consectetur adipiscing",
+        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+      }
+    ],
+    "Team": [
+      {
+        "img": "team/01.jpg",
+        "name": "John Doe",
+        "job": "Director"
+      },
+      {
+        "img": "team/02.jpg",
+        "name": "Mike Doe",
+        "job": "Senior Designer"
+      },
+      {
+        "img": "team/03.jpg",
+        "name": "Jane Doe",
+        "job": "Senior Designer"
+      }
+    ]
+  });
+
   return(
     <>
-    <Navbar></Navbar>
-    <div className="flex justify-center m-40">
-      <div className="w-1/2 flex justify-center">
-        <Link href={"/calendar"}>
-          <div className="text-3xl font-bold text-blue-500 h-40 w-40 "><img src="https://i.ibb.co/m9MMrsD/Screenshot-2023-02-02-185300.png" alt="Screenshot-2023-02-02-185300" border="0"/>CALENDAR</div>
-          {/* <h1 className="text-3xl font-bold text-blue-500 hover:text-4xl">CALENDAR</h1> */}
-        </Link>
-      </div>
-      <div className="w-1/2 flex justify-center">
-        <Link href={"/user-finance"}>
-        <div className="h-40 w-40"><img src="https://i.ibb.co/hMW5Scp/money.png" alt="money" border="0"/></div>
-          <h1 className="text-3xl font-bold text-blue-500">EXPENSES</h1>
-        </Link>
-      </div>
-    </div>
+    <NoSsr>
+    <Navbar onClick={scrollToTop}></Navbar>
+    <Intro/>
+    <About data={landingPageData.About} />
+    <Services data={landingPageData.Services} />
+    <Team data={landingPageData.Team} />
     <Footer />
+    </NoSsr>
     </>
   )
 }
+export default App;

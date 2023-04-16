@@ -2,8 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/personal-finance": "pages/personal-finance.js",
-  "/group-home": "pages/group-home.js",
-  "/": "pages/index.js",
-  "/sign-up": "pages/sign-up.js"
+  "/homepage": "pages/homepage.js"
 }

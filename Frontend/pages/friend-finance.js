@@ -88,7 +88,7 @@ function App() {
             {/* <SearchBar /> */}
             {/* <PendingListDisplay /> */}
             <div>
-            {/* <h3 className='text-2xl font-bold text-gray-500 m-2' style={{borderBottom:"thick solid gray" }}>Search</h3> */}
+            {/* <h3 className='text-2xl font-bold text-gray-300 m-2' style={{borderBottom:"thick solid gray" }}>Search</h3> */}
               <form >
                       <input className="search w-80 text-center border-2 border-gray-600 bg-gray-100 m-1 p-1 text-black rounded-full" placeholder="Search..." onChange={(e) => setQuery(e.target.value.toLowerCase())} />
                   <div className="overflow-auto h-64">
@@ -103,7 +103,7 @@ function App() {
               </form>
             </div>
             <h3
-              className="text-2xl font-bold text-gray-500 m-2 mt-10"
+              className="text-2xl font-bold text-gray-300 m-2 mt-10"
               style={{ borderBottom: "thick solid gray" }}
             >
               Pending Requests
@@ -113,11 +113,8 @@ function App() {
                 {PendingList.map((request, index) => {
                   return (
                     <div
-                      className="users flex items-center p-1 text-white w-100 m-1 min-w-0"
-                      style={{
-                        backgroundColor: "rgb(88, 151, 252)",
-                        borderRadius: "15px",
-                      }}
+                    className="btn btn-custom btn-lg page-scroll"
+                    style={{textAlign: 'left', textTransform: 'lowercase'}}
                     >
                       <p className="justify-start w-60 items-center">
                         {" "}
@@ -151,7 +148,7 @@ function App() {
             {/* <History /> */}
             <div className="App">
               <h3
-                className="text-2xl font-bold text-gray-500 m-2"
+                className="text-2xl font-bold text-gray-300 m-2"
                 style={{ borderBottom: "thick solid gray" }}
               >
                 History
@@ -161,7 +158,7 @@ function App() {
                 {friendHistory.map((user) => {
                   if (user.amount < 0) {
                     return (
-                      <div className="px-5 py-2 m-3 border-r-4 border-b-4 border-t-2 border-l-2 border-red-600 rounded-lg">
+                      <div className="px-5 py-2 m-3 border-r-4 border-b-4 border-t-2 border-l-2 border-red-600 rounded-lg bg-color">
                         <p>
                           {" "}
                           You paid ₹{-user.amount} to {user.friendName} ({user.friendEmail})

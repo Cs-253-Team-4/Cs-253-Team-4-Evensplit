@@ -2,7 +2,7 @@ import Head from "next/head";
 import styles from "styles/Home.module.css";
 import { FaRegEnvelope } from "react-icons/fa";
 import { MdLockOutline } from "react-icons/md";
-import logo from "/public/logo.png";
+import logo from "/public/logo.jpg";
 import Link from "next/link";
 import Footer from "../components/Footer"
 import { useState } from 'react';
@@ -40,11 +40,12 @@ export default function Home() {
   return (
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <div  style={{backgroundColor: 'gray'}}>
       <main className="flex flex-col items-center justify-center flex-1 text-center m-6 ">
-        <div className="bg-white rounded-2xl shadow-2xl m-5 flex w-2/3 max-w-4xl">
+        <div className="bg-black rounded-2xl shadow-2xl m-5 flex w-2/3 max-w-4xl">
           <div className="w-3/5 p-5">
             <img
-              src="https://i.ibb.co/JvG6Lzn/logo-new.png"
+              src="logo.jpg"
               alt="logo-new"
               border="0"
               className="h-20 w-25"
@@ -113,6 +114,7 @@ export default function Home() {
           </div>
         </div>
       </main>
+      </div>
       <Footer/>
     </>
   );

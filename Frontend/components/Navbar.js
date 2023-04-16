@@ -18,10 +18,10 @@ const Navbar = () => {
     <header>
       <nav className={`nav`}>
         <Link href={"/homepage"}>
-          {/* <img src="https://i.ibb.co/JvG6Lzn/logo-new.png" alt="logo-new" border="0" className="h-10 w-15"/> */}
-          <div className="px-10 ">
+          < img src ="logo.jpg" alt="Logo" border="0" className="h-24 w-15" />
+          {/* <div className="px-10 ">
             <h1 className="">EvenSplit</h1>
-          </div>
+          </div> */}
         </Link>
         <div
           onClick={() => setNavActive(!navActive)}

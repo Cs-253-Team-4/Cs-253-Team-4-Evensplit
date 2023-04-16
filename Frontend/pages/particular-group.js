@@ -37,12 +37,14 @@ function App() {
     freezeAllDragEvents: true,
     // nodeHighlightBehavior: true,
     node: {
-      color: "red",
+      color: "lightgreen",
+      fontColor: "white",
       highlightStrokeColor: "blue",
       fontSize: 16,
     },
     link: {
-      color: "black",
+      color: "white",
+      fontColor: "white",
       highlightColor: "lightblue",
       renderLabel: true,
       labelProperty: "amount",
@@ -232,7 +234,7 @@ function App() {
             {/* <Members /> */}
             <div>
               <h3
-                className="text-2xl font-bold text-gray-500 m-2"
+                className="text-2xl font-bold text-gray-300 m-2"
                 style={{ borderBottom: "thick solid gray" }}
               >
                 {group.title}
@@ -247,7 +249,7 @@ function App() {
                 {members.map((member) => {
                   return (
                     <button
-                      className="px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-cyan-500 rounded-lg w-30"
+                      className="px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg w-30"
                       style={{ width: "320px" }}
                       onClick={(e) => {
                         e.preventDefault();
@@ -263,7 +265,7 @@ function App() {
                 })}
               </div>
               <button
-                class="rounded-full w-15 py-0.5 px-3 m-1 mt-5 text-white bg-purple-400"
+                class="rounded-full w-15 py-0.5 px-3 m-1 mt-5 text-white bg-blue-400"
                 onClick={() =>
                   (window.location.href = "./add-member/?id=" + `${group._id}`)
                 }
@@ -278,7 +280,7 @@ function App() {
           <div className="w-1/3 flex flex-col p-7 m-5 rounded-2xl shadow-2xl h-screen">
             {/* <AddGroupTransaction /> */}
             <h3
-              className="text-2xl font-bold text-gray-500 m-2"
+              className="text-2xl font-bold text-gray-300 m-2"
               style={{ borderBottom: "thick solid gray" }}
             >
               Add Group Transaction
@@ -320,11 +322,11 @@ function App() {
               <div className=" overflow-x-scroll ">
                 <div className="flex flex-row">{Member}</div>
               </div>
-              <button className="btn">Add Group transaction</button>
+              <button className="btn btn-custom btn-lg page-scroll">Add Group transaction</button>
             </form>
             {/* <SettleUp /> */}
             <h3
-              className="text-2xl font-bold text-gray-500 m-2 mt-6"
+              className="text-2xl font-bold text-gray-300 m-2 mt-6"
               style={{ borderBottom: "thick solid gray" }}
             >
               Settle Up
@@ -334,7 +336,7 @@ function App() {
                 {simplifiedTransactions.map((transaction) => {
                   if (transaction.Amount < 0) {
                     return (
-                      <div className="users flex items-center p-1 w-100 m-1 min-w-0 border-r-4 border-b-4 border-t-2 border-l-2 border-gray-600 rounded-lg">
+                      <div className="users flex items-center p-1 w-100 m-1 min-w-0 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg">
                         <p className="justify-start w-60 items-center text-red">
                           {" "}
                           You owe {friend.name} ₹ {friend.Amount}{" "}
@@ -351,7 +353,7 @@ function App() {
                     );
                   } else {
                     return (
-                      <div className="users flex items-center p-1 w-100 m-1 min-w-0 border-r-4 border-b-4 border-t-2 border-l-2 border-gray-600 rounded-lg">
+                      <div className="users flex items-center p-1 w-100 m-1 min-w-0 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg">
                         <p className="justify-start w-60 items-center">
                           {" "}
                           {transaction.person1 == localStorage.getItem("user")
@@ -405,7 +407,7 @@ function App() {
             {/* <GroupHistory /> */}
             <div className="App">
               <h3
-                className="text-2xl font-bold text-gray-500 m-2 "
+                className="text-2xl font-bold text-gray-300 m-2 "
                 style={{ borderBottom: "thick solid gray" }}
               >
                 Group History
@@ -415,7 +417,7 @@ function App() {
                 {expenses.map((expense, index) => (
                   <div
                     key={index}
-                    className="px-5 py-2 m-3 border-r-4 border-b-4 border-t-2 border-l-2 border-gray-600 rounded-lg"
+                    className="px-5 py-2 m-3 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg"
                   >
                     <p>
                       {" "}
@@ -445,12 +447,12 @@ function App() {
         <div className="flex flex-col items-center p-7 m-5 mx-auto rounded-2xl shadow-2xl">
           <div>
             <h3
-              className="text-2xl font-bold text-gray-500 m-2"
+              className="text-2xl font-bold text-gray-300 m-2"
               style={{ textDecoration: "underline", marginTop: "30px" }}
             >
               Graph
             </h3>
-            <h5 className="m-2 text-gray-500">Drag nodes as desired</h5>
+            <h5 className="m-2 text-gray-300">Drag nodes as desired</h5>
             {Object.keys(outputGraphData).length &&
             Object.keys(inputGraphConfig).length ? (
               <>

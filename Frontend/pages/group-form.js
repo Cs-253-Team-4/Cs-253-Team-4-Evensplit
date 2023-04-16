@@ -78,7 +78,7 @@ export const GroupForm = () => {
       var i;
       for(i=0;i<data.users.length;i++){
         temp_arr.push(0);
-        temp_arr2.push("px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-gray-100");
+        temp_arr2.push("px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-gray-900");
       }
       setSelected(temp_arr);
       setClassName(temp_arr2);
@@ -94,7 +94,7 @@ export const GroupForm = () => {
       <Navbar></Navbar>
       <div className="flex justify-center">
       <h3
-        className="text-2xl font-bold text-gray-500 m-2 text-center"
+        className="text-2xl font-bold text-gray-300 m-2 text-center"
         style={{ borderBottom: "thick solid gray", textAlign: "center", width: "75%" }}
       >
         Add Group
@@ -147,11 +147,11 @@ export const GroupForm = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   if(Selected[Users.indexOf(item)] == 1){
-                    setClassName([...ClassName.slice(0,Users.indexOf(item)),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-gray-100",...ClassName.slice(Users.indexOf(item)+1)]);
+                    setClassName([...ClassName.slice(0,Users.indexOf(item)),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-gray-900",...ClassName.slice(Users.indexOf(item)+1)]);
                     setSelected([...Selected.slice(0,Users.indexOf(item)),0,...Selected.slice(Users.indexOf(item)+1)]);
                   }
                   else{
-                    setClassName([...ClassName.slice(0,Users.indexOf(item)),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80 bg-green-100",...ClassName.slice(Users.indexOf(item)+1)]);
+                    setClassName([...ClassName.slice(0,Users.indexOf(item)),"px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-gray-100 rounded-lg w-80 bg-green-300 text-black",...ClassName.slice(Users.indexOf(item)+1)]);
                     setSelected([...Selected.slice(0,Users.indexOf(item)),1,...Selected.slice(Users.indexOf(item)+1)]);
                   }
                 }}
@@ -175,10 +175,10 @@ export const GroupForm = () => {
           {/* <label htmlFor="text" className='mr-3'>Text</label> */}
           {/* <input type="date" name="Date" className='text-gray-400 bg-gray-100 outline-none flex-1 rounded-xl p-1.5 pl-5 mb-2'/> */}
         </div>
-        <button className="btn">
+        <button className="btn btn-custom btn-lg page-scroll">
         Submit
         </button>
-        <button className="btn" onClick={(e) => {e.preventDefault(); window.location.href = './group-home'}}>
+        <button className="btn btn-custom btn-lg page-scroll" onClick={(e) => {e.preventDefault(); window.location.href = './group-home'}}>
           Cancel
         </button>
       </form>
