@@ -10,22 +10,120 @@ const Team = (props) => {
           </p>
         </div>
        <div className="flex">
-          {props.data
-            ? props.data.map((d, i) => (
-                <div key={`${d.name}-${i}`} className="col-md-3 col-sm-6 mr-48 team">
+          
+                <div className="col-md-3 col-sm-6 mr-48 team">
                   <div className="thumbnail">
                     {" "}
-                    <img src= "Team.png" alt="hehe" className="team-img" />
+                    <img src= "Team2.png" alt="hehe" className="team-img" />
                     <div className="caption">
-                      <h4>{d.name}</h4>
-                      <p>{d.job}</p>
+                      <h4>Aditya Ajmera</h4>
+                      <p>Frontend Developer</p>
                     </div>
                   </div>
                 </div>
-
-              ))
-            : "loading"}
-</div>
+                <div className="col-md-3 col-sm-6 mr-48 team">
+                  <div className="thumbnail">
+                    {" "}
+                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <div className="caption">
+                      <h4>Antriksh Gupta</h4>
+                      <p>Backend Developer</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3 col-sm-6 mr-48 team">
+                  <div className="thumbnail">
+                    {" "}
+                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <div className="caption">
+                      <h4>Bhavaj Singla</h4>
+                      <p>Frontend Developer</p>
+                    </div>
+                  </div>
+                </div>              
+            
+        </div>
+        <div className="flex">
+          
+                <div className="col-md-3 col-sm-6 mr-48 team">
+                  <div className="thumbnail">
+                    {" "}
+                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <div className="caption">
+                      <h4>Bornadhya Abir Rajbongshi</h4>
+                      <p>Backend Developer</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3 col-sm-6 mr-48 team">
+                  <div className="thumbnail">
+                    {" "}
+                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <div className="caption">
+                      <h4>Dhruv Garg</h4>
+                      <p>Backend Developer</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3 col-sm-6 mr-48 team">
+                  <div className="thumbnail">
+                    {" "}
+                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <div className="caption">
+                      <h4>Manasvi Jain</h4>
+                      <p>Frontend Developer</p>
+                    </div>
+                  </div>
+                </div>              
+            
+        </div>
+        <div className="flex">
+          
+                <div className="col-md-3 col-sm-6 mr-48 team">
+                  <div className="thumbnail">
+                    {" "}
+                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <div className="caption">
+                      <h4>Mihir Deshpande</h4>
+                      <p>Frontend Developer</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3 col-sm-6 mr-48 team">
+                  <div className="thumbnail">
+                    {" "}
+                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <div className="caption">
+                      <h4>Mohak Singh Rana</h4>
+                      <p>Backend Developer</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3 col-sm-6 mr-48 team">
+                  <div className="thumbnail">
+                    {" "}
+                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <div className="caption">
+                      <h4>Rajat Gattani</h4>
+                      <p>Frontend Developer</p>
+                    </div>
+                  </div>
+                </div>              
+            
+        </div>
+        <div className="flex justify-center">
+          
+                <div className="col-md-3 col-sm-6 mr-48 team">
+                  <div className="thumbnail">
+                    {" "}
+                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <div className="caption">
+                      <h4>Shourya Trikha</h4>
+                      <p>Backend Developer</p>
+                    </div>
+                  </div>
+                </div>
+        </div>
       </div>
   );
 };
