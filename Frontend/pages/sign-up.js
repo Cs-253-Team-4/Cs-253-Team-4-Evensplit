@@ -114,7 +114,7 @@ export default function signup() {
     <>
       {/* <h1 className="text-center font-bold text-5xl mb-30 text-blue-500">EvenSplit</h1> */}
       <main className="flex flex-col items-center justify-center flex-1 text-center m-7">
-        <div className="bg-white rounded-2xl shadow-2xl flex w-2/3 max-w-4xl">
+        <div className="bg-gray-800 rounded-2xl shadow-2xl flex w-2/3 max-w-4xl">
           <div className="w-3/5 p-5">
             <img
               src="logo.jpg"

@@ -42,7 +42,7 @@ export default function Home() {
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <div  style={{backgroundColor: 'black'}}>
       <main className="flex flex-col items-center justify-center flex-1 text-center m-6 ">
-        <div className="bg-gray-700 rounded-2xl shadow-2xl m-5 flex w-2/3 max-w-4xl">
+        <div className="bg-gray-800 rounded-2xl shadow-2xl m-5 flex w-2/3 max-w-4xl">
           <div className="w-3/5 p-5">
             <img
               src="logo.jpg"
