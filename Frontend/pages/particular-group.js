@@ -178,7 +178,7 @@ function App() {
           setExpenses(data.group.expenses.reverse());
           setSimplifiedTransactions(data.simplifiedTransactions);
           let increment = 0;
-          let vertices = data.group.members.length ;
+          let vertices = data.group.members.length;
           setOutputGraphData({
             nodes: data.group.members.map((item) => {
               const x =
@@ -228,7 +228,7 @@ function App() {
       <Navbar></Navbar>
       <main className="flex flex-col flex-1 text-center m-5">
         <div className="flex">
-          <div className="w-1/3 flex flex-col items-center p-7 m-5 mx-auto rounded-2xl shadow-2xl h-screen">
+          <div className="w-1/3 flex flex-col bg-gray-700 items-center p-7 m-5 mx-auto rounded-2xl shadow-2xl h-screen">
             {/* <Balance/> */}
             {/* <IncomeExpenses/> */}
             {/* <Members /> */}
@@ -277,7 +277,7 @@ function App() {
               {/* </form> */}
             </div>
           </div>
-          <div className="w-1/3 flex flex-col p-7 m-5 rounded-2xl shadow-2xl h-screen">
+          <div className="w-1/3 flex flex-col  bg-gray-700 p-7 m-5 rounded-2xl shadow-2xl h-screen">
             {/* <AddGroupTransaction /> */}
             <h3
               className="text-2xl font-bold text-gray-300 m-2"
@@ -322,7 +322,9 @@ function App() {
               <div className=" overflow-x-scroll ">
                 <div className="flex flex-row">{Member}</div>
               </div>
-              <button className="btn btn-custom btn-lg page-scroll">Add Group transaction</button>
+              <button className="btn btn-custom btn-lg page-scroll">
+                Add Group transaction
+              </button>
             </form>
             {/* <SettleUp /> */}
             <h3
@@ -403,7 +405,7 @@ function App() {
               </ul>
             </div>
           </div>
-          <div className="w-1/3 flex p-7 m-5 mx-auto justify-center rounded-2xl shadow-2xl h-screen">
+          <div className="w-1/3 flex p-7 m-5 bg-gray-700 mx-auto justify-center rounded-2xl shadow-2xl h-screen">
             {/* <GroupHistory /> */}
             <div className="App">
               <h3
@@ -444,7 +446,7 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-center p-7 m-5 mx-auto rounded-2xl shadow-2xl">
+        <div className="flex flex-col items-center bg-gray-700 p-7 m-5 mx-auto rounded-2xl shadow-2xl">
           <div>
             <h3
               className="text-2xl font-bold text-gray-300 m-2"
