@@ -106,7 +106,7 @@ export default function signup() {
         <div className="bg-gray-800 rounded-2xl shadow-2xl flex w-2/3 max-w-4xl">
           <div className="w-3/5 p-5">
             <img
-              src="https://i.ibb.co/JvG6Lzn/logo-new.png"
+              src="logo.jpg"
               alt="logo-new"
               border="0"
               style={{borderRadius : '10px'}}
