@@ -109,6 +109,7 @@ export default function signup() {
               src="https://i.ibb.co/JvG6Lzn/logo-new.png"
               alt="logo-new"
               border="0"
+              style={{borderRadius : '10px'}}
               className="h-20 w-25"
             />
             <div className="py-10">

@@ -120,6 +120,7 @@ export default function signup() {
               src="logo.jpg"
               alt="logo-new"
               border="0"
+              style={{borderRadius : '10px'}}
               className="h-20 w-25"
             />
             <div>
