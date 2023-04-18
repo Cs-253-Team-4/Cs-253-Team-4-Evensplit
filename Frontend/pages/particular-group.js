@@ -220,7 +220,7 @@ function App() {
       window.localStorage.getItem("user") == null
     )
       window.location.href = "/";
-    fetchUserData();
+    else fetchUserData();
   }, []);
 
   return (

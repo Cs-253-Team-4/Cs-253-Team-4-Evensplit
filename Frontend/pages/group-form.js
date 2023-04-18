@@ -86,7 +86,7 @@ export const GroupForm = () => {
   }
   useEffect(() => {
     if(window.localStorage.getItem('token') == null || window.localStorage.getItem('user') == null) window.location.href="/"
-    fetchUserData()
+    else fetchUserData()
   }, [])
 
   return (
