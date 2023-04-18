@@ -294,9 +294,12 @@ app.post('/api/addFriendTransaction', async (req,res) => {    //body = {friendEm
 			const filter2 = {email: email};
 			const update2 = {$push: {friends: {'amount': -amount, 'message': message, 'friendEmail': friendEmail, 'friendName': friend.name}}};	//amount < 0 means we sent money to friend
 			const filter3 = {email: email};
-			const update3 = {$push: {personal: {'Amount': -amount, 'Title': `You paid ${friend.name} (${friendEmail})`, 'Time' : new Date()}}};	//amount < 0 means we sent money to friend
+			var update3, update4;
+			if(amount >=0) update3 = {$push: {personal: {'Amount': -amount, 'Title': `You paid ${friend.name} (${friendEmail})`, 'Time' : new Date()}}};	//amount < 0 means we sent money to friend
+			else update3 = {$push: {personal: {'Amount': -amount, 'Title': `You received from ${friend.name} (${friendEmail})`, 'Time' : new Date()}}};
 			const filter4 = {email: friendEmail};
-			const update4 = {$push: {personal: {'Amount': amount, 'Title': `You received from ${user.name} (${email})`, 'Time' : new Date()}}};	//amount < 0 means we sent money to friend
+			if(amount >=0) update4 = {$push: {personal: {'Amount': amount, 'Title': `You received from ${user.name} (${email})`, 'Time' : new Date()}}};	//amount < 0 means we sent money to friend
+			else update4 = {$push: {personal: {'Amount': amount, 'Title': `You paid ${user.name} (${email})`, 'Time' : new Date()}}};
 			await Expense.updateOne(filter,update)
 			.then(console.log('Friend Transaction Added Successfully!'))
 			.catch((err) => {

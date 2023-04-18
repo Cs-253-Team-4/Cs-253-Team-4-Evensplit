@@ -10,8 +10,8 @@ export const AddRequest = () => {
 
   const onSubmit = async (e) => {
     // e.preventDefault();
-    if(amount == 0){
-      window.alert('Transaction amount cannot be 0');
+    if(amount <= 0){
+      window.alert('Request amount cannot be 0 or negative');
       e.preventDefault();
     }
     else{
