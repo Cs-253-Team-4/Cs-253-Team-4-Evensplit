@@ -17,7 +17,7 @@ export default function user_finance(){
       </div>
       <div className="w-1/3 flex justify-center">
         <Link href={"/friend-finance"}>
-        <div className="h-40 w-40"><img src="https://i.ibb.co/qyqnxvW/friend2.png" alt="friend2" border="0" style={{borderRadius: '10px'}}/></div>
+        <div className="h-40 w-40"><img src="friends.jpg" alt="friend2" border="0" style={{borderRadius: '10px'}}/></div>
           <h1 className="text-3xl font-bold text-blue-500" style={{textAlign: 'center'}}>FRIEND</h1>
         </Link>
       </div>
