@@ -42,7 +42,7 @@ export default function Home() {
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <div  style={{backgroundColor: 'black'}}>
       <main className="flex flex-col items-center justify-center flex-1 text-center m-6 ">
-        <div className="bg-gray-800 rounded-2xl shadow-2xl m-5 flex w-2/3 max-w-4xl">
+        <div className="bg-black rounded-2xl shadow-2xl m-5 flex w-2/3 max-w-4xl">
           <div className="w-3/5 p-5">
             <img
               src="logo.jpg"
@@ -52,10 +52,10 @@ export default function Home() {
               className="h-20 w-25"
             />
             <div className="py-12">
-              <div className="text-3xl font-bold text-blue-500 mb-2">
+              <div className="text-3xl font-bold text-blue-400 mb-2">
                 Log into your Account
               </div>
-              <div className="border-2 w-10 border-blue-500 inline-block mb-2"></div>
+              <div className="border-2 w-10 border-blue-400 inline-block mb-2"></div>
               <form onSubmit={loginUser}>
                 <div className="flex flex-col items-center mb-10">
                   <div className="bg-gray-100 w-64 p-2 flex items-center mb-5 rounded-md">
@@ -85,7 +85,7 @@ export default function Home() {
                       <input type="checkbox" name="remember" className="mr-2" />
                       Remember Me
                     </label>
-                    <a href="/forgot-password" className="text-xs hover:text-blue-500">
+                    <a href="/forgot-password" className="text-xs hover:text-blue-400">
                       Forgot Password?
                     </a>
                   </div>
@@ -94,7 +94,7 @@ export default function Home() {
                   type="submit"
                   value="Login"
                   placeholder="Login"
-                  className="text-xl text-blue-500 border-blue-500 border-2 rounded-full px-7 py-1.5  hover:bg-blue-500 hover:text-white"
+                  className="text-xl text-blue-400 border-blue-400 border-2 rounded-full px-7 py-1.5  hover:bg-blue-400 hover:text-white"
                 />
               </form>
             </div>
