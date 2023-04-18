@@ -92,12 +92,12 @@ const App = () => {
               </div>
               <div
                 className="inc-exp-container justify-center flex align-center"
-                style={{ backgroundColor: "#222222", borderWidth: '2px', borderColor: '#999999', borderRadius: '20px' }}
+                style={{ backgroundColor: "#111111", borderWidth: '2px', borderColor: '#999999', borderRadius: '20px' }}
               >
                 <div>
                   <p
                     className="money plus p-3"
-                    style={{ backgroundColor: "#222222" }}
+                    style={{ backgroundColor: "#111111" }}
                   >
                     Income <br></br>
                     {moneyFormatter(income)}
@@ -106,7 +106,7 @@ const App = () => {
                 <div>
                   <p
                     className="money minus p-3"
-                    style={{ backgroundColor: "#222222" }}
+                    style={{ backgroundColor: "#111111" }}
                   >
                     Expense <br></br>
                     {moneyFormatter(expense)}
