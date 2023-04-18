@@ -128,7 +128,7 @@ export const GroupForm = () => {
       <div>
         <div className="flex justify-center ">
           <h3
-            className="text-2xl font-bold text-gray-500 text-center"
+            className="text-2xl font-bold py-5 text-gray-300 text-center"
             style={{
               borderBottom: "thick solid gray",
               textAlign: "center",
@@ -222,9 +222,9 @@ export const GroupForm = () => {
                 {/* <label htmlFor="text" className='mr-3'>Text</label> */}
                 {/* <input type="date" name="Date" className='text-gray-400 bg-gray-100 outline-none flex-1 rounded-xl p-1.5 pl-5 mb-2'/> */}
               </div>
-              <button className="btn">Add member(s)</button>
+              <button className="btn btn-custom btn-lg page-scroll">Add member(s)</button>
               <button
-                className="btn"
+                className="btn btn-custom btn-lg page-scroll"
                 onClick={(e) => {
                   e.preventDefault();
                   window.location.href = "./group-home";
