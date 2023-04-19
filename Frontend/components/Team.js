@@ -14,7 +14,7 @@ const Team = (props) => {
                 <div className="col-md-3 col-sm-6 mr-48 team">
                   <div className="thumbnail">
                     {" "}
-                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <img src= "9.png" alt="hehe" className="team-img" />
                     <div className="caption">
                       <h4>Aditya Ajmera</h4>
                       <p>Frontend Developer</p>
@@ -24,7 +24,7 @@ const Team = (props) => {
                 <div className="col-md-3 col-sm-6 mr-48 team">
                   <div className="thumbnail">
                     {" "}
-                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <img src= "8.png" alt="hehe" className="team-img" />
                     <div className="caption">
                       <h4>Antriksh Gupta</h4>
                       <p>Backend Developer</p>
@@ -34,7 +34,7 @@ const Team = (props) => {
                 <div className="col-md-3 col-sm-6 mr-48 team">
                   <div className="thumbnail">
                     {" "}
-                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <img src= "7.png" alt="hehe" className="team-img" />
                     <div className="caption">
                       <h4>Bhavaj Singla</h4>
                       <p>Frontend Developer</p>
@@ -48,7 +48,7 @@ const Team = (props) => {
                 <div className="col-md-3 col-sm-6 mr-48 team">
                   <div className="thumbnail">
                     {" "}
-                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <img src= "6.png" alt="hehe" className="team-img" />
                     <div className="caption">
                       <h4>Bornadhya Abir Rajbongshi</h4>
                       <p>Backend Developer</p>
@@ -58,7 +58,7 @@ const Team = (props) => {
                 <div className="col-md-3 col-sm-6 mr-48 team">
                   <div className="thumbnail">
                     {" "}
-                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <img src= "10.png" alt="hehe" className="team-img" />
                     <div className="caption">
                       <h4>Dhruv Garg</h4>
                       <p>Backend Developer</p>
@@ -68,7 +68,7 @@ const Team = (props) => {
                 <div className="col-md-3 col-sm-6 mr-48 team">
                   <div className="thumbnail">
                     {" "}
-                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <img src= "1.png" alt="hehe" className="team-img" />
                     <div className="caption">
                       <h4>Manasvi Jain</h4>
                       <p>Frontend Developer</p>
@@ -82,7 +82,7 @@ const Team = (props) => {
                 <div className="col-md-3 col-sm-6 mr-48 team">
                   <div className="thumbnail">
                     {" "}
-                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <img src= "5.png" alt="hehe" className="team-img" />
                     <div className="caption">
                       <h4>Mihir Deshpande</h4>
                       <p>Frontend Developer</p>
@@ -92,7 +92,7 @@ const Team = (props) => {
                 <div className="col-md-3 col-sm-6 mr-48 team">
                   <div className="thumbnail">
                     {" "}
-                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <img src= "3.png" alt="hehe" className="team-img" />
                     <div className="caption">
                       <h4>Mohak Singh Rana</h4>
                       <p>Backend Developer</p>
@@ -102,7 +102,7 @@ const Team = (props) => {
                 <div className="col-md-3 col-sm-6 mr-48 team">
                   <div className="thumbnail">
                     {" "}
-                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <img src= "4.png" alt="hehe" className="team-img" />
                     <div className="caption">
                       <h4>Rajat Gattani</h4>
                       <p>Frontend Developer</p>
@@ -116,7 +116,7 @@ const Team = (props) => {
                 <div className="col-md-3 col-sm-6 mr-48 team">
                   <div className="thumbnail">
                     {" "}
-                    <img src= "Team2.png" alt="hehe" className="team-img" />
+                    <img src= "2.png" alt="hehe" className="team-img" />
                     <div className="caption">
                       <h4>Shourya Trikha</h4>
                       <p>Backend Developer</p>
