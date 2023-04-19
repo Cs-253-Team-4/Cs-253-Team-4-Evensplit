@@ -137,7 +137,24 @@ function App() {
             <div className="item-center m-2 p-3 overflow-auto max-h-64">
               <ul className="list flex flex-col justify-center item-center">
                 {PendingList.map((request, index) => {
-                  return (
+                  return localStorage.getItem('user') == request.senderEmail ? (request.resolved == false ? (<div
+                  className="btn btn-custom btn-lg page-scroll"
+                  style={{ textAlign: "left", textTransform: "lowercase" }}
+                >
+                  <p className="justify-start w-60 items-center">
+                    {" "}
+                    You Requested ₹
+                    {request.amount} from {request.receiverName} ({request.receiverEmail}) Message: {request.message}
+                  </p>
+                </div>) : <div
+                  className="btn btn-custom btn-lg page-scroll"
+                  style={{ textAlign: "left", textTransform: "lowercase" }}
+                >
+                  <p className="justify-start w-60 items-center">
+                    {" "}
+                    {request.message}
+                  </p>
+                </div>) : (
                     <div
                       className="btn btn-custom btn-lg page-scroll"
                       style={{ textAlign: "left", textTransform: "lowercase" }}
