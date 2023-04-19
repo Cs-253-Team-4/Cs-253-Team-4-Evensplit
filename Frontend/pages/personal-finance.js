@@ -68,10 +68,9 @@ const App = () => {
     if (
       window.localStorage.getItem("token") == null ||
       window.localStorage.getItem("user") == null
-    ){
+    ) {
       window.location.href = "/";
-    }
-    else fetchUserData();
+    } else fetchUserData();
   }, []);
 
   return (
@@ -80,7 +79,7 @@ const App = () => {
       <Header />
       <main className="flex flex-col flex-1 text-center m-10">
         <div className="flex">
-          <div className="w-1/3 bg-gray-700 flex p-7 m-5 rounded-2xl shadow-2xl">
+          <div className="w-1/3 bg-gray-700 justify-center flex p-7 m-5 rounded-2xl shadow-2xl">
             <div>
               {/* <Balance /> */}
               {/* <IncomeExpenses /> */}
@@ -92,7 +91,12 @@ const App = () => {
               </div>
               <div
                 className="inc-exp-container justify-center flex align-center"
-                style={{ backgroundColor: "#111111", borderWidth: '2px', borderColor: '#999999', borderRadius: '20px' }}
+                style={{
+                  backgroundColor: "#111111",
+                  borderWidth: "2px",
+                  borderColor: "#999999",
+                  borderRadius: "20px",
+                }}
               >
                 <div>
                   <p
@@ -118,7 +122,10 @@ const App = () => {
           <div className="w-1/3 bg-gray-700 flex flex-col p-7 m-5 rounded-2xl shadow-2xl">
             <AddTransaction />
           </div>
-          <div className="w-1/3 flex pu-7 m-5 bg-gray-700 justify-center rounded-2xl shadow-2xl">
+          <div
+            className="w-1/3 flex pu-7 m-5 bg-gray-700 justify-center rounded-2xl shadow-2xl "
+            style={{ height: "580px" }}
+          >
             <div className="justify-end m-2 p-3">
               <h3
                 className="text-2xl font-bold text-gray-300 m-2"
@@ -127,8 +134,8 @@ const App = () => {
                 History
               </h3>
               <ul
-                className="list"
-                style={{ textAlign: "left", width: "300px" }}
+                className="list overflow-y-auto"
+                style={{ textAlign: "left", width: "300px", height: "480px" }}
               >
                 {/* {tempdata.map(transaction => (<Transaction key={transaction.Title} transaction={transaction} />))} */}
                 {users.map((user) => (
@@ -143,7 +150,7 @@ const App = () => {
                   >
                     ₹ {Math.abs(user.Amount)} <br />
                     {user.Title} <br />
-                    {new Date(user.Time).toLocaleDateString('en-GB')}
+                    {new Date(user.Time).toLocaleDateString("en-GB")}
                   </li>
                 ))}
               </ul>
