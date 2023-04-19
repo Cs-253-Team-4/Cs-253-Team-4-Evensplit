@@ -108,12 +108,12 @@ function App() {
                   placeholder="Search..."
                   onChange={(e) => setQuery(e.target.value.toLowerCase())}
                 />
-                <div className="overflow-auto h-64">
+                <div className="overflow-y-auto h-64">
                   {search(users).map((item) =>
                     item.email == localStorage.getItem("user") ? null : (
                       <button
                         key={item._id}
-                        className="px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 rounded-lg w-80"
+                        className="px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-400 bg-black rounded-lg w-80"
                         onClick={(e) => {
                           e.preventDefault();
                           navigator.clipboard.writeText(item.email);
@@ -129,7 +129,7 @@ function App() {
               </form>
             </div>
             <h3
-              className="text-2xl font-bold text-gray-300 m-2 mt-10"
+              className="text-2xl font-bold text-gray-300 m-2 mt-12"
               style={{ borderBottom: "thick solid gray" }}
             >
               Pending Requests
@@ -190,11 +190,14 @@ function App() {
                 History
               </h3>
               {/* Iterate over imported array in userData */}
-              <div className="users overflow-auto h-3/4 w-96">
+              <div
+                className="users overflow-auto w-96"
+                style={{ height: "600px" }}
+              >
                 {friendHistory.map((user) => {
                   if (user.amount < 0) {
                     return (
-                      <div className="px-5 py-2 m-3 border-r-4 border-b-4 border-t-2 border-l-2 border-red-600 rounded-lg bg-color">
+                      <div className="px-5 py-2 m-3 bg-black border-r-4 border-b-4 border-t-2 border-l-2 border-red-600 rounded-lg bg-color">
                         <p>
                           {" "}
                           You paid ₹{-user.amount} to {user.friendName} (
@@ -210,7 +213,7 @@ function App() {
                     );
                   } else {
                     return (
-                      <div className="px-5 py-2 m-3 border-r-4 border-b-4 border-t-2 border-l-2 border-green-600 rounded-lg ">
+                      <div className="px-5 py-2 m-3 bg-black border-r-4 border-b-4 border-t-2 border-l-2 border-green-600 rounded-lg ">
                         <p>
                           {" "}
                           You received ₹{user.amount} from {user.friendName} (
