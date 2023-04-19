@@ -105,7 +105,7 @@ function App() {
   const Member = members?.map((Member_List) => {
     return (
       <>
-        <div className="flex flex-nowrap items-center bg-neutral-400 mx-2 px-1 my-1 rounded-lg">
+        <div className="flex flex-nowrap items-center border-r-2 border-b-2 border-t-1 border-l-1 border-blue-300 bg-black mx-2 px-1 my-1 rounded-lg">
           <Checkbox
             key={Member_List.email}
             type="checkbox"
@@ -249,7 +249,7 @@ function App() {
                 {members.map((member) => {
                   return (
                     <button
-                      className="px-5 py-2 m-1 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg w-30"
+                      className="px-5 py-2 m-1 bg-black border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg w-30"
                       style={{ width: "320px" }}
                       onClick={(e) => {
                         e.preventDefault();
@@ -264,16 +264,16 @@ function App() {
                   );
                 })}
                 <button
-                class="rounded-full w-15 py-0.5 px-3 m-1 mt-5 text-white bg-blue-400"
-                onClick={() =>
-                  (window.location.href = "./add-member/?id=" + `${group._id}`)
-                }
-              >
-                {" "}
-                Add Members{" "}
-              </button>
+                  class="rounded-full w-15 py-0.5 px-3 m-1 mt-5 text-white bg-blue-400"
+                  onClick={() =>
+                    (window.location.href =
+                      "./add-member/?id=" + `${group._id}`)
+                  }
+                >
+                  {" "}
+                  Add Members{" "}
+                </button>
               </div>
-              
 
               {/* </form> */}
             </div>
@@ -310,7 +310,7 @@ function App() {
                   required
                 />
               </div>
-              <div className="flex justify-center bg-neutral-400 mx-2 px-1 my-1 rounded-lg">
+              <div className="flex justify-center border-r-2 border-b-2 border-t-1 border-l-1 border-blue-300 bg-black mx-2 px-1 my-1 rounded-lg">
                 <Checkbox
                   type="checkbox"
                   name="selectAll"
@@ -339,7 +339,7 @@ function App() {
                 {simplifiedTransactions.map((transaction) => {
                   if (transaction.Amount < 0) {
                     return (
-                      <div className="users flex items-center p-1 w-100 m-1 min-w-0 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg">
+                      <div className="users flex items-center bg-black p-1 w-100 m-1 min-w-0 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg">
                         <p className="justify-start w-60 items-center text-red">
                           {" "}
                           You owe {friend.name} ₹ {friend.Amount}{" "}
@@ -356,7 +356,7 @@ function App() {
                     );
                   } else {
                     return (
-                      <div className="users flex items-center p-1 w-100 m-1 min-w-0 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg">
+                      <div className="users flex items-center bg-black p-1 w-100 m-1 min-w-0 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg">
                         <p className="justify-start w-60 items-center">
                           {" "}
                           {transaction.person1 == localStorage.getItem("user")
@@ -420,7 +420,7 @@ function App() {
                 {expenses.map((expense, index) => (
                   <div
                     key={index}
-                    className="px-5 py-2 m-3 border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg"
+                    className="px-5 py-2 m-3 bg-black border-r-4 border-b-4 border-t-2 border-l-2 border-blue-300 rounded-lg"
                   >
                     <p>
                       {" "}
