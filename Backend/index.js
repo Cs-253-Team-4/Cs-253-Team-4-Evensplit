@@ -76,6 +76,7 @@ app.post('/api/register', async (req, res) => { //body = {name, email, password}
 				email: req.body.email,
 				password: newPassword,
 				isAdmin: false,
+				wrongAttempts: 0
 			}).then(Expense.create({email: req.body.email})).then(Calendar.create({email: req.body.email}));
 			res.json({ status: 'ok' });
 			console.log('User registered successfully!');
@@ -103,7 +104,7 @@ app.post('/api/setNewPassword', async (req, res) => { //body = {name, email, pas
 			else{
 			const newPassword = await bcrypt.hash(req.body.password, 10)
 			filter = {email: req.body.email};
-			update = {$set: {password: newPassword}}
+			update = {$set: {password: newPassword, wrongAttempts: 0}}
 			await User.updateOne(filter,update)
 			res.json({ status: 'ok' });
 			console.log('Password updated successfully!');
@@ -168,7 +169,7 @@ app.post('/api/login', async (req, res) => {    //body = {email, password}
 			user.password
 		)
 
-		if (isPasswordValid) {
+		if (isPasswordValid && user.wrongAttempts < 5) {
 			const token = jwt.sign(
 				{
 					name: user.name,
@@ -176,11 +177,18 @@ app.post('/api/login', async (req, res) => {    //body = {email, password}
 				},
 				process.env.SECRET
 			)
+			await User.updateOne({email: user.email}, {$set: {wrongAttempts: 0}})
 			console.log('Login Successful!')
 			console.log(user.email);	
 			return res.json({ status: 'ok', user: token, email: user.email })
 		} else {
-			return res.json({ status: 'error', error: 'Invalid Login', user: false })
+			await User.updateOne({email: user.email}, {$set: {wrongAttempts: user.wrongAttempts+1}})
+			if(user.wrongAttempts >=4){
+				return res.json({ status: 'error', error: 'Too many wrong attempts', user: false })
+			}
+			else{
+				return res.json({ status: 'error', error: 'Invalid Login', user: false })
+			}
 		}
 	}
 })

@@ -2,5 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/particular-group": "pages/particular-group.js"
+  "/": "pages/index.js",
+  "/forgot-password": "pages/forgot-password.js",
+  "/homepage": "pages/homepage.js"
 }

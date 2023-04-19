@@ -33,7 +33,12 @@ export default function Home() {
       localStorage.setItem("user", data.email);
       alert("Login successful");
       window.location.href = "/homepage";
-    } else {
+    } 
+    else if(data.error == "Too many wrong attempts") {
+      alert("Too many wrong attempts, please reset your password");
+      window.location.href = "/forgot-password";
+    }
+    else{
       alert("Please check your username and password");
     }
   }
