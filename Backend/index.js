@@ -263,9 +263,18 @@ app.post('/api/requestMoney', async (req,res) => {    //body = {friendEmail, amo
 			var friendEmail = req.body.friendEmail;
 			var amount = req.body.amount;
 			var message = req.body.message;
+			const friend = await User.findOne({email: friendEmail});
 			const filter = {email: friendEmail};
-			const update = {$push: {requests: {'amount': amount, 'message': message, 'senderEmail': email, 'senderName': user.name, 'resolved': false}}};
+			const update = {$push: {requests: {'amount': amount, 'message': message, 'senderEmail': email, 'senderName': user.name, 'receiverEmail': friendEmail, 'receiverName': friend.name, 'resolved': false}}};
+			const filter2 = {email: email};
+			const update2 = {$push: {requests: {'amount': amount, 'message': message, 'senderEmail': email, 'senderName': user.name, 'receiverEmail': friendEmail, 'receiverName': friend.name, 'resolved': false}}};
 			Expense.updateOne(filter,update)
+			.then(console.log('Request of Money to Friend Sent Successfully!'))
+			.catch((err) => {
+				console.log(err);
+				console.log('Request Sending Failed!')
+			})
+			Expense.updateOne(filter2,update2)
 			.then(console.log('Request of Money to Friend Sent Successfully!'))
 			.catch((err) => {
 				console.log(err);
@@ -458,7 +467,25 @@ app.post('/api/deleteRequest', async (req,res) => {    //body = {index, amount, 
 							console.log(err);
 							console.log('Friend Transaction Adding Failed!')
 						});
+						var filter5 = {email: friend.email};
+						var update5 = {$push: {requests: {'amount': request.amount, 'message': `Your request of ₹${request.amount} to ${user.name} (${email}) has been accepted!`, 'senderEmail': request.senderEmail, 'senderName': request.senderName, 'receiverEmail': email, 'receiverName': user.name, 'resolved': true}}};
+						await Expense.updateOne(filter5,update5)
+						.then(console.log('Friend Transaction Added Successfully!'))
+						.catch((err) => {
+							console.log(err);
+							console.log('Friend Transaction Adding Failed!')
+						});
 						res.json({status: 'ok'});
+					}
+					else{
+						var filter5 = {email: friend.email};
+						var update5 = {$push: {requests: {'amount': request.amount, 'message': `Your request of ₹${request.amount} to ${user.name} (${email}) has been declined!`, 'senderEmail': request.senderEmail, 'senderName': request.senderName, 'receiverEmail': email, 'receiverName': user.name, 'resolved': true}}};
+						await Expense.updateOne(filter5,update5)
+						.then(console.log('Friend Transaction Added Successfully!'))
+						.catch((err) => {
+							console.log(err);
+							console.log('Friend Transaction Adding Failed!')
+						});
 					}
 				}
 					// res.redirect('http://localhost:3000/friend-finance');
